@@ -219,12 +219,12 @@
   <!-- NAVBAR -->
   <nav id="nav">
     <div class="nav-inner">
-      <a href="/" class="nav-logo" id="nl">KoBa Studio</a>
+      <a href="KoBa Studio v2.html" class="nav-logo" id="nl">KoBa Studio</a>
       <ul class="nav-links">
-        <li><a href="/servicios.html" id="nl1">Servicios</a></li>
-        <li><a href="/proceso.html" id="nl2" class="active">Proceso</a></li>
-        <li><a href="/productos.html" id="nl3">Productos</a></li>
-        <li><a href="/contacto.html" id="nl4">Contacto</a></li>
+        <li><a href="Servicios.html" id="nl1">Servicios</a></li>
+        <li><a href="Proceso.html" id="nl2" class="active">Proceso</a></li>
+        <li><a href="Productos.html" id="nl3">Productos</a></li>
+        <li><a href="Contacto.html" id="nl4">Contacto</a></li>
       </ul>
       <button id="btn-login" class="nav-btn">Iniciar sesión</button>
       <a href="/dashboard.html" id="btn-profile" class="nav-btn" style="display:none">Mi perfil</a>
@@ -435,8 +435,8 @@
       El primer paso<br/><span class="muted">es una conversación.</span>
     </h2>
     <div class="cta-btn-row wa" style="transition-delay:200ms">
-      <a href="/contacto.html" class="btn-gold">Agendar diagnóstico</a>
-      <a href="/productos.html" class="btn-outline-dark" style="border-color:rgba(248,246,242,0.15);color:rgba(248,246,242,0.5)">Ver productos →</a>
+      <a href="Contacto.html" class="btn-gold">Agendar diagnóstico</a>
+      <a href="Productos.html" class="btn-outline-dark" style="border-color:rgba(248,246,242,0.15);color:rgba(248,246,242,0.5)">Ver productos →</a>
     </div>
   </div>
 
@@ -444,12 +444,12 @@
   <footer id="footer">
     <div class="footer-grid">
       <div class="footer-top">
-        <a href="/" class="f-logo">KoBa Studio</a>
+        <a href="KoBa Studio v2.html" class="f-logo">KoBa Studio</a>
         <ul class="f-nav">
-          <li><a href="/servicios.html">Servicios</a></li>
-          <li><a href="/proceso.html">Proceso</a></li>
-          <li><a href="/productos.html">Productos</a></li>
-          <li><a href="/contacto.html">Contacto</a></li>
+          <li><a href="Servicios.html">Servicios</a></li>
+          <li><a href="Proceso.html">Proceso</a></li>
+          <li><a href="Productos.html">Productos</a></li>
+          <li><a href="Contacto.html">Contacto</a></li>
         </ul>
         <div class="f-socials">
           <a href="#" class="f-social" aria-label="LinkedIn">
@@ -544,39 +544,36 @@
         <button id="tab-login" class="modal-tab active">Entrar</button>
         <button id="tab-signup" class="modal-tab">Registrarse</button>
       </div>
-
       <form id="form-login" style="display:flex; flex-direction:column; gap:12px">
         <input id="login-email" type="email" placeholder="Email" required />
-        <input id="login-password" type="password" placeholder="Contraseña" required />
+        <input id="login-password" type="password" placeholder="Contrasena" required />
         <p id="error-login" class="form-error"></p>
         <button type="submit" class="btn-modal-submit">Entrar</button>
         <div style="position:relative; text-align:center; margin:8px 0">
           <span style="background:#FFFFFF; padding:0 8px; position:relative; z-index:1; color:#A8A49F; font-size:12px">o</span>
           <div style="position:absolute; top:50%; left:0; right:0; height:1px; background:#E8E4DF; z-index:0"></div>
         </div>
-        <button type="button" id="btn-google" style="display:flex; align-items:center; justify-content:center; gap:8px; background:#FFFFFF; color:#0D0D0D; border:1px solid #E8E4DF; padding:12px 16px; border-radius:8px; font-size:14px; font-weight:500; cursor:pointer; transition:border-color 200ms, background 200ms">
+        <button type="button" id="btn-google" class="btn-google-oauth" style="display:flex; align-items:center; justify-content:center; gap:8px; background:#FFFFFF; color:#0D0D0D; border:1px solid #E8E4DF; padding:12px 16px; border-radius:8px; font-size:14px; font-weight:500; cursor:pointer; transition:border-color 200ms, background 200ms">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v12M6 12h12"/></svg>
           Continuar con Google
         </button>
       </form>
-
       <form id="form-signup" style="display:none; flex-direction:column; gap:12px">
         <input id="signup-email" type="email" placeholder="Email" required />
-        <input id="signup-password" type="password" placeholder="Contraseña (mínimo 6 caracteres)" required />
+        <input id="signup-password" type="password" placeholder="Contrasena (minimo 6 caracteres)" required />
         <p id="error-signup" class="form-error"></p>
         <button type="submit" class="btn-modal-submit">Crear cuenta</button>
         <div style="position:relative; text-align:center; margin:8px 0">
           <span style="background:#FFFFFF; padding:0 8px; position:relative; z-index:1; color:#A8A49F; font-size:12px">o</span>
           <div style="position:absolute; top:50%; left:0; right:0; height:1px; background:#E8E4DF; z-index:0"></div>
         </div>
-        <button type="button" id="btn-google" style="display:flex; align-items:center; justify-content:center; gap:8px; background:#FFFFFF; color:#0D0D0D; border:1px solid #E8E4DF; padding:12px 16px; border-radius:8px; font-size:14px; font-weight:500; cursor:pointer; transition:border-color 200ms, background 200ms">
+        <button type="button" id="btn-google-signup" class="btn-google-oauth" style="display:flex; align-items:center; justify-content:center; gap:8px; background:#FFFFFF; color:#0D0D0D; border:1px solid #E8E4DF; padding:12px 16px; border-radius:8px; font-size:14px; font-weight:500; cursor:pointer; transition:border-color 200ms, background 200ms">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v12M6 12h12"/></svg>
           Continuar con Google
         </button>
       </form>
     </div>
   </div>
-
   <script type="module" src="/assets/js/main.js"></script>
 </body>
 </html>

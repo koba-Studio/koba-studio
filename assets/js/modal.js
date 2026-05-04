@@ -71,16 +71,17 @@ export function initModal() {
     }
   })
 
-  const btnGoogle = document.getElementById('btn-google')
-  btnGoogle?.addEventListener('click', async () => {
-    btnGoogle.textContent = 'Redirigiendo...'
-    btnGoogle.disabled = true
-    try {
-      await signInWithGoogle()
-    } catch (err) {
-      btnGoogle.textContent = 'Continuar con Google'
-      btnGoogle.disabled = false
-    }
+  document.querySelectorAll('.btn-google-oauth').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      btn.textContent = 'Redirigiendo...'
+      btn.disabled = true
+      try {
+        await signInWithGoogle()
+      } catch (err) {
+        btn.textContent = 'Continuar con Google'
+        btn.disabled = false
+      }
+    })
   })
 
   function closeModal() {

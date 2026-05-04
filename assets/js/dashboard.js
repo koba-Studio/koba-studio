@@ -42,9 +42,12 @@ async function loadPurchases(userId) {
   `).join('')
 }
 
-document.getElementById('btn-logout')?.addEventListener('click', async () => {
+async function handleLogout() {
   await signOut()
-  window.location.href = '/index.html'
-})
+  window.location.href = '/'
+}
+
+document.getElementById('btn-logout')?.addEventListener('click', handleLogout)
+document.getElementById('btn-logout-main')?.addEventListener('click', handleLogout)
 
 loadDashboard()
