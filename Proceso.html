@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Proceso — KoBa Studio</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="shared.css" />
+  <style>
+    /* ── PROCESO PAGE STYLES ── */
+
+    /* Step sections */
+    .step-section {
+      padding: 120px 48px;
+      border-top: 1px solid #E8E4DF;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .step-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      align-items: start;
+    }
+    .step-num-label {
+      display: flex;
+      align-items: baseline;
+      gap: 16px;
+      margin-bottom: 32px;
+    }
+    .step-num {
+      font-size: clamp(80px, 10vw, 140px);
+      font-weight: 600;
+      letter-spacing: -0.05em;
+      line-height: 1;
+      color: #F0EDE8;
+    }
+    .step-code {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+      color: #A8A49F;
+    }
+    .step-title {
+      font-size: clamp(36px, 4vw, 56px);
+      font-weight: 600;
+      letter-spacing: -0.03em;
+      line-height: 1;
+      color: #0D0D0D;
+      margin-bottom: 24px;
+    }
+    .step-desc {
+      font-size: 16px;
+      color: #6B6866;
+      line-height: 1.75;
+      margin-bottom: 40px;
+      max-width: 440px;
+    }
+    .step-items {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+    .step-items li {
+      font-size: 15px;
+      color: #2C2A27;
+      padding: 14px 0;
+      border-top: 1px solid #F0EDE8;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .step-items li:last-child { border-bottom: 1px solid #F0EDE8; }
+    .step-dash { background: linear-gradient(90deg, #7B6FE8, #E8507A); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; flex-shrink: 0; }
+    .step-right {}
+    .step-img-placeholder {
+      width: 100%;
+      aspect-ratio: 4/3;
+      background: #F8F6F2;
+      border-radius: 16px;
+      border: 1px solid #E8E4DF;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 12px;
+      position: relative;
+      overflow: hidden;
+    }
+    .step-img-placeholder::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: repeating-linear-gradient(
+        45deg,
+        transparent,
+        transparent 24px,
+        rgba(232,228,223,0.4) 24px,
+        rgba(232,228,223,0.4) 25px
+      );
+    }
+    .step-img-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+      color: #A8A49F;
+      position: relative;
+      z-index: 1;
+    }
+    .step-img-icon {
+      width: 40px; height: 40px;
+      background: linear-gradient(135deg, #7B6FE8, #E8507A);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      position: relative;
+      z-index: 1;
+    }
+    .step-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 32px;
+      font-size: 11px;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      background: linear-gradient(90deg, #7B6FE8, #E8507A);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      border-image: linear-gradient(90deg, #7B6FE8, #E8507A) 1;
+      border-color: transparent;
+      padding: 6px 16px;
+      border-radius: 100px;
+    }
+
+    /* Progress nav (fixed right) */
+    .step-progress-nav {
+      position: fixed;
+      right: 32px;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 100;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      align-items: center;
+    }
+    .spn-dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: #E8E4DF;
+      transition: background 300ms, transform 300ms;
+      position: relative;
+    }
+    .spn-dot.active { background: linear-gradient(135deg, #7B6FE8, #E8507A); transform: scale(1.5); }
+    .spn-dot::after {
+      content: attr(data-label);
+      position: absolute;
+      right: 16px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: #A8A49F;
+      white-space: nowrap;
+      opacity: 0;
+      transition: opacity 200ms;
+    }
+    .spn-dot:hover::after { opacity: 1; }
+
+    /* CTA section */
+    .proceso-cta {
+      background: #0D0D0D;
+      padding: 120px 48px;
+      text-align: center;
+    }
+    .proceso-cta-eyebrow {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+      background: linear-gradient(90deg, #7B6FE8, #E8507A);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 24px;
+    }
+    .proceso-cta-title {
+      font-size: clamp(40px, 5vw, 72px);
+      font-weight: 600;
+      color: #F8F6F2;
+      letter-spacing: -0.03em;
+      margin-bottom: 48px;
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .proceso-cta-title .muted { color: rgba(248,246,242,0.3); }
+    .cta-btn-row { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
+
+    @media (max-width: 900px) {
+      .step-grid { grid-template-columns: 1fr; gap: 48px; }
+      .step-section { padding: 80px 24px; }
+      .step-progress-nav { display: none; }
+      .proceso-cta { padding: 80px 24px; }
+    }
+  </style>
+</head>
+<body>
+
+  <div id="cur-dot"></div>
+  <div id="cur-ring"></div>
+
+  <!-- NAVBAR -->
+  <nav id="nav">
+    <div class="nav-inner">
+      <a href="KoBa Studio v2.html" class="nav-logo" id="nl">KoBa Studio</a>
+      <ul class="nav-links">
+        <li><a href="Servicios.html" id="nl1">Servicios</a></li>
+        <li><a href="Proceso.html" id="nl2" class="active">Proceso</a></li>
+        <li><a href="Productos.html" id="nl3">Productos</a></li>
+        <li><a href="Contacto.html" id="nl4">Contacto</a></li>
+      </ul>
+      <button id="btn-login" class="nav-btn">Iniciar sesión</button>
+      <a href="dashboard.html" id="btn-profile" class="nav-btn" style="display:none">Mi perfil</a>
+      <button id="btn-logout" class="nav-btn" style="display:none">Cerrar sesión</button>
+    </div>
+  </nav>
+
+  <!-- PAGE HERO -->
+  <header class="page-hero">
+    <p class="page-hero-eyebrow wa">KBA · Proceso</p>
+    <h1 class="page-hero-headline" id="ph">
+      <span class="word"><span class="word-inner">Proceso</span></span>
+      <span class="word"><span class="word-inner" style="transition-delay:80ms">simple.</span></span>
+      <br style="line-height:1">
+      <span class="word"><span class="word-inner" style="transition-delay:180ms; background: linear-gradient(135deg, #7B6FE8, #E8507A); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">Resultados</span></span>
+      <span class="word"><span class="word-inner" style="transition-delay:260ms">reales.</span></span>
+    </h1>
+    <p class="page-hero-sub" id="phs">
+      Cada proyecto pasa por cuatro fases probadas. Sin sorpresas, sin excusas — solo entregas medibles en cada paso.
+    </p>
+  </header>
+
+  <!-- MARQUEE -->
+  <div class="marquee-bar">
+    <div class="mq-track">
+      <span class="mq-item">01 Diagnóstico</span><span class="mq-dot">◆</span>
+      <span class="mq-item">02 Diseño</span><span class="mq-dot">◆</span>
+      <span class="mq-item">03 Construcción</span><span class="mq-dot">◆</span>
+      <span class="mq-item">04 Entrega</span><span class="mq-dot">◆</span>
+      <span class="mq-item">01 Diagnóstico</span><span class="mq-dot">◆</span>
+      <span class="mq-item">02 Diseño</span><span class="mq-dot">◆</span>
+      <span class="mq-item">03 Construcción</span><span class="mq-dot">◆</span>
+      <span class="mq-item">04 Entrega</span><span class="mq-dot">◆</span>
+      <span class="mq-item">01 Diagnóstico</span><span class="mq-dot">◆</span>
+      <span class="mq-item">02 Diseño</span><span class="mq-dot">◆</span>
+      <span class="mq-item">03 Construcción</span><span class="mq-dot">◆</span>
+      <span class="mq-item">04 Entrega</span><span class="mq-dot">◆</span>
+    </div>
+  </div>
+
+  <!-- STEP PROGRESS NAV -->
+  <div class="step-progress-nav" id="spnav">
+    <div class="spn-dot active" data-label="Diagnóstico" data-target="step1"></div>
+    <div class="spn-dot" data-label="Diseño" data-target="step2"></div>
+    <div class="spn-dot" data-label="Construcción" data-target="step3"></div>
+    <div class="spn-dot" data-label="Entrega" data-target="step4"></div>
+  </div>
+
+  <!-- STEP 01 -->
+  <div id="step1">
+    <section class="step-section">
+      <div class="step-grid">
+        <div class="step-left wa">
+          <div class="step-num-label">
+            <span class="step-num">01</span>
+            <span class="step-code">KBA-001</span>
+          </div>
+          <h2 class="step-title">Diagnóstico</h2>
+          <p class="step-desc">
+            Antes de escribir una línea de código, <strong style="background: linear-gradient(135deg, #7B6FE8, #E8507A); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">entendemos tu operación</strong>. Analizamos tus procesos actuales, identificamos las fricciones más costosas y proponemos un camino claro.
+          </p>
+          <ul class="step-items">
+            <li><span class="step-dash">—</span>Workshop de 90 minutos con tu equipo</li>
+            <li><span class="step-dash">—</span>Mapeo de flujos de trabajo actuales</li>
+            <li><span class="step-dash">—</span>Identificación de fricciones y cuellos de botella</li>
+            <li><span class="step-dash">—</span>Análisis de herramientas existentes</li>
+            <li><span class="step-dash">—</span>Propuesta a medida sin compromiso</li>
+          </ul>
+          <span class="step-tag">Paso 1 de 4 · Sin costo</span>
+        </div>
+        <div class="step-right wa" style="transition-delay:150ms">
+          <div class="step-img-placeholder">
+            <svg class="step-img-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <span class="step-img-label">Imagen diagnóstico</span>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <div class="section-divider"></div>
+
+  <!-- STEP 02 -->
+  <div id="step2">
+    <section class="step-section">
+      <div class="step-grid">
+        <div class="step-left wa">
+          <div class="step-num-label">
+            <span class="step-num">02</span>
+            <span class="step-code">KBA-002</span>
+          </div>
+          <h2 class="step-title">Diseño</h2>
+          <p class="step-desc">
+            Con el diagnóstico en mano, diseñamos la <strong style="background: linear-gradient(135deg, #7B6FE8, #E8507A); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">arquitectura exacta</strong> de tu solución. Prototipo funcional en dos semanas. Revisiones ilimitadas hasta que sea perfecto.
+          </p>
+          <ul class="step-items">
+            <li><span class="step-dash">—</span>Arquitectura de producto y flujos de usuario</li>
+            <li><span class="step-dash">—</span>Sistema de diseño a medida</li>
+            <li><span class="step-dash">—</span>Prototipo funcional en pocos días</li>
+            <li><span class="step-dash">—</span>Concepto de animaciones e interacciones</li>
+            <li><span class="step-dash">—</span>Revisiones ilimitadas</li>
+          </ul>
+          <span class="step-tag">Paso 2 de 4 · 2 semanas</span>
+        </div>
+        <div class="step-right wa" style="transition-delay:150ms">
+          <div class="step-img-placeholder">
+            <svg class="step-img-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="8" height="8" rx="1"/><rect x="14" y="3" width="8" height="8" rx="1"/><rect x="2" y="13" width="8" height="8" rx="1"/><rect x="14" y="13" width="8" height="8" rx="1"/></svg>
+            <span class="step-img-label">Imagen diseño</span>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <div class="section-divider"></div>
+
+  <!-- STEP 03 -->
+  <div id="step3">
+    <section class="step-section">
+      <div class="step-grid">
+        <div class="step-left wa">
+          <div class="step-num-label">
+            <span class="step-num">03</span>
+            <span class="step-code">KBA-003</span>
+          </div>
+          <h2 class="step-title">Construcción</h2>
+          <p class="step-desc">
+            Desarrollo <strong style="background: linear-gradient(135deg, #7B6FE8, #E8507A); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">ágil por sprints</strong> de dos semanas. Cada sprint tiene entregables concretos. Ves el progreso en tiempo real. Sin caja negra, sin sorpresas al final.
+          </p>
+          <ul class="step-items">
+            <li><span class="step-dash">—</span>Desarrollo ágil por sprints de 2 semanas</li>
+            <li><span class="step-dash">—</span>Integraciones con tu stack tecnológico actual</li>
+            <li><span class="step-dash">—</span>Testing completo en cada sprint</li>
+            <li><span class="step-dash">—</span>Documentación técnica completa</li>
+            <li><span class="step-dash">—</span>Código documentado, sin deuda técnica</li>
+            <li><span class="step-dash">—</span>Acceso al repositorio en todo momento</li>
+          </ul>
+          <span class="step-tag">Paso 3 de 4 · Sprints 2 sem.</span>
+        </div>
+        <div class="step-right wa" style="transition-delay:150ms">
+          <div class="step-img-placeholder">
+            <svg class="step-img-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+            <span class="step-img-label">Imagen construcción</span>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <div class="section-divider"></div>
+
+  <!-- STEP 04 -->
+  <div id="step4">
+    <section class="step-section">
+      <div class="step-grid">
+        <div class="step-left wa">
+          <div class="step-num-label">
+            <span class="step-num">04</span>
+            <span class="step-code">KBA-004</span>
+          </div>
+          <h2 class="step-title">Entrega</h2>
+          <p class="step-desc">
+            Tu software va <strong style="background: linear-gradient(135deg, #7B6FE8, #E8507A); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">live</strong>. Documentación completa, capacitación de tu equipo, soporte post-lanzamiento. No terminamos cuando entregamos — terminamos cuando funciona.
+          </p>
+          <ul class="step-items">
+            <li><span class="step-dash">—</span>Despliegue en tu infraestructura</li>
+            <li><span class="step-dash">—</span>Documentación técnica completa</li>
+            <li><span class="step-dash">—</span>Capacitación del equipo (hasta 4 personas)</li>
+            <li><span class="step-dash">—</span>Soporte prioritario 30 días post-lanzamiento</li>
+            <li><span class="step-dash">—</span>Iteración continua disponible</li>
+          </ul>
+          <span class="step-tag">Paso 4 de 4 · Go live</span>
+        </div>
+        <div class="step-right wa" style="transition-delay:150ms">
+          <div class="step-img-placeholder">
+            <svg class="step-img-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+            <span class="step-img-label">Imagen entrega</span>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- TICKER -->
+  <div class="ticker-bar">
+    <div class="tk-row tk-row-1">
+      <div class="tk-track">
+        <span class="tk-item">Diagnóstico</span><span class="tk-sep">·</span>
+        <span class="tk-item">Diseño</span><span class="tk-sep">·</span>
+        <span class="tk-item">Construcción</span><span class="tk-sep">·</span>
+        <span class="tk-item">Entrega</span><span class="tk-sep">·</span>
+        <span class="tk-item">KoBa Studio</span><span class="tk-sep">·</span>
+        <span class="tk-item">SaaS B2B</span><span class="tk-sep">·</span>
+        <span class="tk-item">Diagnóstico</span><span class="tk-sep">·</span>
+        <span class="tk-item">Diseño</span><span class="tk-sep">·</span>
+        <span class="tk-item">Construcción</span><span class="tk-sep">·</span>
+        <span class="tk-item">Entrega</span><span class="tk-sep">·</span>
+        <span class="tk-item">KoBa Studio</span><span class="tk-sep">·</span>
+        <span class="tk-item">SaaS B2B</span><span class="tk-sep">·</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- CTA -->
+  <div class="proceso-cta">
+    <p class="proceso-cta-eyebrow wa">¿Listo para comenzar?</p>
+    <h2 class="proceso-cta-title wa" style="transition-delay:100ms">
+      El primer paso<br/><span class="muted">es una conversación.</span>
+    </h2>
+    <div class="cta-btn-row wa" style="transition-delay:200ms">
+      <a href="Contacto.html" class="btn-gold">Agendar diagnóstico</a>
+      <a href="Productos.html" class="btn-outline-dark" style="border-color:rgba(248,246,242,0.15);color:rgba(248,246,242,0.5)">Ver productos →</a>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer id="footer">
+    <div class="footer-grid">
+      <div class="footer-top">
+        <a href="KoBa Studio v2.html" class="f-logo">KoBa Studio</a>
+        <ul class="f-nav">
+          <li><a href="Servicios.html">Servicios</a></li>
+          <li><a href="Proceso.html">Proceso</a></li>
+          <li><a href="Productos.html">Productos</a></li>
+          <li><a href="Contacto.html">Contacto</a></li>
+        </ul>
+        <div class="f-socials">
+          <a href="#" class="f-social" aria-label="LinkedIn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+          </a>
+          <a href="#" class="f-social" aria-label="Twitter">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"/></svg>
+          </a>
+          <a href="#" class="f-social" aria-label="Instagram">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="0.5" fill="currentColor"/></svg>
+          </a>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p class="f-copy">© 2025 KoBa Studio</p>
+        <p class="f-copy">Soluciones SaaS B2B · Automatización</p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    /* CURSOR */
+    const dot=document.getElementById('cur-dot'),ring=document.getElementById('cur-ring');
+    let mx=innerWidth/2,my=innerHeight/2,dx=mx,dy=my,rx=mx,ry=my;
+    document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;});
+    function lerp(a,b,t){return a+(b-a)*t;}
+    (function loop(){
+      dx=lerp(dx,mx,0.15);dy=lerp(dy,my,0.15);
+      rx=lerp(rx,mx,0.07);ry=lerp(ry,my,0.07);
+      dot.style.left=dx+'px';dot.style.top=dy+'px';
+      ring.style.left=rx+'px';ring.style.top=ry+'px';
+      requestAnimationFrame(loop);
+    })();
+    document.querySelectorAll('a,button').forEach(el=>{
+      el.addEventListener('mouseenter',()=>document.body.classList.add('ch'));
+      el.addEventListener('mouseleave',()=>document.body.classList.remove('ch'));
+    });
+    document.addEventListener('mousedown',()=>{
+      document.body.classList.add('cc');
+      setTimeout(()=>document.body.classList.remove('cc'),180);
+    });
+
+    /* NAVBAR */
+    const nav=document.getElementById('nav');
+    window.addEventListener('scroll',()=>nav.classList.toggle('scrolled',scrollY>80),{passive:true});
+    function navIn(){
+      setTimeout(()=>document.getElementById('nl').classList.add('in'),100);
+      ['nl1','nl2','nl3','nl4'].forEach((id,i)=>setTimeout(()=>document.getElementById(id).classList.add('in'),250+i*100));
+      setTimeout(()=>document.getElementById('btn-login').classList.add('in'),650);
+    }
+    document.readyState==='complete'?navIn():window.addEventListener('load',navIn);
+
+    /* HERO words */
+    document.querySelectorAll('.page-hero-headline .word-inner').forEach((w,i)=>{
+      setTimeout(()=>w.classList.add('in'),300+i*90);
+    });
+    setTimeout(()=>document.getElementById('phs').classList.add('in'),200);
+
+    /* STEP PROGRESS NAV */
+    const steps=['step1','step2','step3','step4'];
+    const dots=document.querySelectorAll('.spn-dot');
+    function updateStepNav(){
+      const mid=scrollY+innerHeight*0.5;
+      let active=0;
+      steps.forEach((id,i)=>{
+        const el=document.getElementById(id);
+        if(el&&el.offsetTop<=mid) active=i;
+      });
+      dots.forEach((d,i)=>d.classList.toggle('active',i===active));
+    }
+    window.addEventListener('scroll',updateStepNav,{passive:true});
+    updateStepNav();
+
+    /* INTERSECTION OBSERVER */
+    const io=new IntersectionObserver(entries=>{
+      entries.forEach(e=>{
+        if(!e.isIntersecting)return;
+        const el=e.target;
+        const d=parseInt(el.style.transitionDelay)||0;
+        setTimeout(()=>el.classList.add('in'),d);
+        io.unobserve(el);
+      });
+    },{threshold:0.15});
+    document.querySelectorAll('.wa').forEach(el=>io.observe(el));
+  </script>
+
+  <!-- MODAL AUTH -->
+  <div id="modal-auth" class="modal-overlay">
+    <div class="modal-box">
+      <button id="modal-close" class="modal-close-btn">&times;</button>
+      <div class="modal-tabs">
+        <button id="tab-login" class="modal-tab active">Entrar</button>
+        <button id="tab-signup" class="modal-tab">Registrarse</button>
+      </div>
+
+      <form id="form-login" style="display:flex; flex-direction:column; gap:12px">
+        <input id="login-email" type="email" placeholder="Email" required />
+        <input id="login-password" type="password" placeholder="Contraseña" required />
+        <p id="error-login" class="form-error"></p>
+        <button type="submit" class="btn-modal-submit">Entrar</button>
+        <div style="position:relative; text-align:center; margin:8px 0">
+          <span style="background:#FFFFFF; padding:0 8px; position:relative; z-index:1; color:#A8A49F; font-size:12px">o</span>
+          <div style="position:absolute; top:50%; left:0; right:0; height:1px; background:#E8E4DF; z-index:0"></div>
+        </div>
+        <button type="button" id="btn-google" style="display:flex; align-items:center; justify-content:center; gap:8px; background:#FFFFFF; color:#0D0D0D; border:1px solid #E8E4DF; padding:12px 16px; border-radius:8px; font-size:14px; font-weight:500; cursor:pointer; transition:border-color 200ms, background 200ms">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v12M6 12h12"/></svg>
+          Continuar con Google
+        </button>
+      </form>
+
+      <form id="form-signup" style="display:none; flex-direction:column; gap:12px">
+        <input id="signup-email" type="email" placeholder="Email" required />
+        <input id="signup-password" type="password" placeholder="Contraseña (mínimo 6 caracteres)" required />
+        <p id="error-signup" class="form-error"></p>
+        <button type="submit" class="btn-modal-submit">Crear cuenta</button>
+        <div style="position:relative; text-align:center; margin:8px 0">
+          <span style="background:#FFFFFF; padding:0 8px; position:relative; z-index:1; color:#A8A49F; font-size:12px">o</span>
+          <div style="position:absolute; top:50%; left:0; right:0; height:1px; background:#E8E4DF; z-index:0"></div>
+        </div>
+        <button type="button" id="btn-google" style="display:flex; align-items:center; justify-content:center; gap:8px; background:#FFFFFF; color:#0D0D0D; border:1px solid #E8E4DF; padding:12px 16px; border-radius:8px; font-size:14px; font-weight:500; cursor:pointer; transition:border-color 200ms, background 200ms">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v12M6 12h12"/></svg>
+          Continuar con Google
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <script type="module" src="/assets/js/main.js"></script>
+</body>
+</html>

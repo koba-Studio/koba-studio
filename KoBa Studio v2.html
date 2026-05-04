@@ -1,0 +1,969 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>KoBa Studio — SaaS Personalizado B2B</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+
+  <style>
+    /* ── RESET ── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; font-family: 'Inter', sans-serif; }
+    body { background: #FFFFFF; color: #0D0D0D; overflow-x: hidden; cursor: none; }
+    a, button { cursor: none; text-decoration: none; }
+    ::selection { background: rgba(196,139,47,0.15); color: #0D0D0D; }
+    *:focus-visible { outline: 2px solid #7B6FE8; outline-offset: 3px; }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration: 0.001ms !important; transition-duration: 0.001ms !important; }
+      .will-animate { opacity: 1 !important; transform: none !important; }
+    }
+
+    @keyframes gradShift {
+      0%   { background-position: 0% 50%; }
+      50%  { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+    @keyframes irisShift {
+      0%   { background-position: 0% 50%; }
+      50%  { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    /* ── CURSOR ── */
+    #cur-dot, #cur-ring {
+      position: fixed; border-radius: 50%; pointer-events: none; z-index: 9999;
+      transform: translate(-50%, -50%); will-change: transform;
+    }
+    #cur-dot { width: 8px; height: 8px; background: #0D0D0D; transition: opacity 200ms, transform 200ms; }
+    #cur-ring {
+      width: 28px; height: 28px; border: 1.5px solid rgba(13,13,13,0.25);
+      transition: width 250ms ease, height 250ms ease, border-color 250ms ease, background 250ms ease;
+    }
+    body.ch #cur-dot { opacity: 0; }
+    body.ch #cur-ring { width: 52px; height: 52px; border-color: #C48B2F; }
+    body.cc #cur-ring { width: 20px; height: 20px; }
+
+
+
+    /* ── NAVBAR ── */
+    #nav {
+      position: fixed; top: 0; left: 0; right: 0; height: 64px; z-index: 1000;
+      transition: height 400ms ease, background 400ms ease, border-color 400ms ease;
+      border-bottom: 1px solid transparent;
+    }
+    #nav.scrolled {
+      height: 52px; background: rgba(255,255,255,0.9);
+      backdrop-filter: blur(20px) saturate(180%);
+      border-bottom-color: #E8E4DF;
+    }
+    .nav-inner {
+      max-width: 1200px; margin: 0 auto; height: 100%;
+      display: flex; align-items: center; justify-content: space-between; padding: 0 48px;
+    }
+    .nav-logo {
+      font-size: 16px; font-weight: 600; color: #0D0D0D; letter-spacing: -0.01em;
+      opacity: 0; transform: translateX(-12px);
+      transition: opacity 500ms ease-out 100ms, transform 500ms ease-out 100ms, color 200ms;
+    }
+    .nav-logo.in { opacity: 1; transform: none; }
+    .nav-logo:hover { color: #C48B2F; }
+    .nav-links { display: flex; gap: 36px; list-style: none; }
+    .nav-links a {
+      font-size: 14px; color: #2C2A27; position: relative;
+      opacity: 0; transform: translateY(-6px);
+      transition: opacity 400ms ease-out, transform 400ms ease-out, color 200ms;
+    }
+    .nav-links a.in { opacity: 1; transform: none; }
+    .nav-links a::after {
+      content: ''; position: absolute; bottom: -2px; left: 0;
+      width: 0; height: 1px; background: #C48B2F; transition: width 300ms ease;
+    }
+    .nav-links a:hover::after { width: 100%; }
+    .nav-btn {
+      font-size: 13px; font-weight: 500; color: #0D0D0D;
+      border: 1px solid #E8E4DF; padding: 9px 20px; border-radius: 100px;
+      opacity: 0; transition: opacity 400ms ease-out 500ms, background 200ms, color 200ms, border-color 200ms;
+    }
+    .nav-btn.in { opacity: 1; }
+    .nav-btn:hover { background: #0D0D0D; color: #FFFFFF; border-color: #0D0D0D; }
+
+    /* ── HERO ── */
+    #hero {
+      min-height: 100vh; display: flex; flex-direction: column;
+      justify-content: flex-end; padding: 0 48px 80px;
+      position: relative; background: #FFFFFF; overflow: hidden;
+    }
+    .hero-top-label {
+      position: absolute; top: 104px; left: 48px;
+      font-size: 11px; font-weight: 400; text-transform: uppercase;
+      letter-spacing: 0.18em; color: #A8A49F;
+      opacity: 0; transform: translateY(10px);
+      transition: opacity 500ms ease-out 400ms, transform 500ms ease-out 400ms;
+    }
+    .hero-top-label.in { opacity: 1; transform: none; }
+    .hero-top-right {
+      position: absolute; top: 104px; right: 48px;
+      font-size: 11px; font-weight: 400; text-transform: uppercase;
+      letter-spacing: 0.18em; color: #A8A49F; text-align: right;
+      opacity: 0; transform: translateY(10px);
+      transition: opacity 500ms ease-out 500ms, transform 500ms ease-out 500ms;
+    }
+    .hero-top-right.in { opacity: 1; transform: none; }
+    .hero-headline {
+      font-size: clamp(64px, 10vw, 160px);
+      font-weight: 600; line-height: 0.95;
+      letter-spacing: -0.04em; color: #0D0D0D;
+      max-width: 1100px;
+    }
+    .hero-headline .word {
+      display: inline-block; overflow: hidden; vertical-align: bottom;
+    }
+    .hero-headline .word-inner {
+      display: block;
+      transform: translateY(110%);
+      transition: transform 800ms cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .hero-headline .word-inner.in { transform: translateY(0); }
+    .hero-headline .accent { background: linear-gradient(135deg, #7B6FE8, #E8507A); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .hero-bottom {
+      display: flex; align-items: flex-end; justify-content: space-between;
+      margin-top: 48px; flex-wrap: wrap; gap: 32px;
+    }
+    .hero-sub {
+      font-size: 16px; font-weight: 400; color: #6B6866; line-height: 1.6;
+      max-width: 320px;
+      opacity: 0; transform: translateY(16px);
+      transition: opacity 600ms ease-out 1200ms, transform 600ms ease-out 1200ms;
+    }
+    .hero-sub.in { opacity: 1; transform: none; }
+    .hero-cta {
+      display: flex; flex-direction: column; align-items: flex-end; gap: 12px;
+      opacity: 0; transform: translateY(16px);
+      transition: opacity 600ms ease-out 1300ms, transform 600ms ease-out 1300ms;
+    }
+    .hero-cta.in { opacity: 1; transform: none; }
+    .btn-gold {
+      background: linear-gradient(135deg, #7B6FE8, #C060C8, #E8507A, #6BBCE8);
+      background-size: 200% 200%;
+      color: #FFFFFF; font-family: 'Inter', sans-serif;
+      font-size: 14px; font-weight: 500; letter-spacing: 0.02em;
+      padding: 14px 32px; border-radius: 100px; border: none;
+      transition: transform 250ms, box-shadow 250ms, background-position 400ms;
+      animation: gradShift 4s ease infinite;
+    }
+    .btn-gold:hover { transform: translateY(-2px); box-shadow: 0 12px 32px rgba(123,111,232,0.4); animation-play-state: paused; }
+    .btn-gold:active { transform: scale(0.97); }
+    .btn-outline {
+      font-size: 13px; font-weight: 400; color: #6B6866; display: flex; align-items: center; gap: 6px;
+      transition: color 200ms;
+    }
+    .btn-outline:hover { color: #0D0D0D; }
+    .btn-outline svg { transition: transform 200ms; }
+    .btn-outline:hover svg { transform: translateX(4px); }
+
+    /* Scroll indicator line */
+    .hero-scroll-line {
+      position: absolute; bottom: 0; left: 48px;
+      width: 1px; background: #E8E4DF; transform-origin: top;
+      transition: height 0.1s linear;
+    }
+
+    /* ── MARQUEE ── */
+    .marquee-section {
+      border-top: 1px solid #E8E4DF; border-bottom: 1px solid #E8E4DF;
+      padding: 14px 0; overflow: hidden; background: #FFFFFF;
+    }
+    .marquee-track {
+      display: flex; white-space: nowrap;
+      animation: mLeft 28s linear infinite;
+    }
+    .marquee-track:hover { animation-play-state: paused; }
+    .marquee-item {
+      font-size: 12px; font-weight: 500; text-transform: uppercase;
+      letter-spacing: 0.14em; color: #A8A49F; padding: 0 32px;
+    }
+    .marquee-dot { color: #C48B2F; margin: 0 8px; font-size: 10px; }
+    @keyframes mLeft { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+
+    /* ── PROCESS SECTION ── */
+    #process {
+      padding: 160px 48px 0;
+      background: #FFFFFF;
+    }
+    .process-header {
+      display: flex; align-items: flex-start; justify-content: space-between;
+      margin-bottom: 80px; flex-wrap: wrap; gap: 24px;
+    }
+    .process-eyebrow {
+      font-size: 11px; font-weight: 400; text-transform: uppercase;
+      letter-spacing: 0.18em; color: #A8A49F; margin-bottom: 20px;
+    }
+    .process-title {
+      font-size: clamp(40px, 5vw, 72px); font-weight: 600;
+      letter-spacing: -0.03em; line-height: 1; color: #0D0D0D; max-width: 500px;
+    }
+    .process-desc {
+      font-size: 16px; color: #6B6866; line-height: 1.7;
+      max-width: 340px; align-self: flex-end;
+    }
+
+    /* Scroll-driven horizontal cards */
+    #process-scroll { height: 350vh; position: relative; }
+    .process-sticky {
+      position: sticky; top: 0; height: 100vh;
+      display: flex; align-items: center; overflow: hidden;
+      padding: 0 48px;
+    }
+    .process-cards-track {
+      display: flex; gap: 0; will-change: transform;
+    }
+    .p-card {
+      min-width: 100vw; padding: 0 48px;
+      display: flex; align-items: center; gap: 80px;
+    }
+    .p-card-num {
+      font-size: clamp(120px, 18vw, 220px); font-weight: 600;
+      line-height: 1; letter-spacing: -0.05em; color: #F0EDE8;
+      transition: color 600ms ease; flex-shrink: 0;
+      width: 280px; text-align: right;
+    }
+    .p-card.active .p-card-num { color: #0D0D0D; }
+    .p-card-content { flex: 1; max-width: 600px; }
+    .p-card-code {
+      font-size: 11px; text-transform: uppercase; letter-spacing: 0.18em;
+      color: #A8A49F; margin-bottom: 32px; display: flex; align-items: center; gap: 12px;
+    }
+    .p-card-code-dot {
+      width: 6px; height: 6px; border-radius: 50%; background: #C48B2F;
+      opacity: 0; transform: scale(0);
+      transition: opacity 400ms ease, transform 400ms ease;
+    }
+    .p-card.active .p-card-code-dot { opacity: 1; transform: scale(1); }
+    .p-card-title {
+      font-size: clamp(40px, 5vw, 72px); font-weight: 600;
+      letter-spacing: -0.03em; line-height: 1; color: #0D0D0D;
+      margin-bottom: 32px;
+      transform: translateX(40px); opacity: 0;
+      transition: transform 700ms cubic-bezier(0.16,1,0.3,1), opacity 700ms cubic-bezier(0.16,1,0.3,1);
+    }
+    .p-card.active .p-card-title { transform: translateX(0); opacity: 1; }
+    .p-card-list { list-style: none; }
+    .p-card-list li {
+      font-size: 15px; color: #6B6866; line-height: 2;
+      display: flex; align-items: baseline; gap: 12px;
+      border-top: 1px solid #F0EDE8; padding: 8px 0;
+      opacity: 0; transform: translateX(20px);
+      transition: opacity 500ms ease, transform 500ms ease;
+    }
+    .p-card.active .p-card-list li:nth-child(1) { opacity: 1; transform: none; transition-delay: 100ms; }
+    .p-card.active .p-card-list li:nth-child(2) { opacity: 1; transform: none; transition-delay: 180ms; }
+    .p-card.active .p-card-list li:nth-child(3) { opacity: 1; transform: none; transition-delay: 260ms; }
+    .p-card.active .p-card-list li:nth-child(4) { opacity: 1; transform: none; transition-delay: 340ms; }
+    .p-card.active .p-card-list li:nth-child(5) { opacity: 1; transform: none; transition-delay: 420ms; }
+    .p-card-list .dash { color: #C48B2F; font-weight: 400; flex-shrink: 0; }
+    .p-card-tag {
+      display: inline-block; margin-top: 32px;
+      font-size: 11px; font-weight: 500; text-transform: uppercase;
+      letter-spacing: 0.15em; color: #0D0D0D;
+      border: 1px solid #E8E4DF; padding: 6px 16px; border-radius: 100px;
+      opacity: 0; transition: opacity 500ms ease 500ms;
+    }
+    .p-card.active .p-card-tag { opacity: 1; }
+
+    /* Progress bar */
+    .process-progress {
+      position: absolute; bottom: 48px; left: 48px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .prog-dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: #E8E4DF; transition: background 400ms, transform 400ms;
+    }
+    .prog-dot.active { background: #C48B2F; transform: scale(1.4); }
+
+    /* ── BRIDGE ── */
+    #bridge {
+      padding: 160px 48px; background: #FFFFFF;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .bridge-inner { max-width: 1100px; width: 100%; }
+    .bridge-big {
+      font-size: clamp(48px, 8vw, 120px); font-weight: 600;
+      letter-spacing: -0.04em; line-height: 0.95; color: #0D0D0D;
+    }
+    .bridge-big .will-animate {
+      display: block; overflow: hidden;
+    }
+    .bridge-big .line-inner {
+      display: block; transform: translateY(100%);
+      transition: transform 900ms cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .bridge-big .line-inner.in { transform: translateY(0); }
+    .bridge-big .accent { color: #C48B2F; }
+    .bridge-big .light { color: #A8A49F; }
+
+    /* ── TICKER (dark) ── */
+    #ticker {
+      background: #0D0D0D; padding: 16px 0; overflow: hidden;
+    }
+    #ticker:hover .t-track, #ticker:hover .t-track-r { animation-play-state: paused; }
+    .t-row { display: flex; white-space: nowrap; }
+    .t-row + .t-row { margin-top: 8px; }
+    .t-track { display: inline-flex; animation: tLeft 25s linear infinite; }
+    .t-track-r { display: inline-flex; animation: tRight 32s linear infinite; }
+    @keyframes tLeft { 0%{transform:translateX(0)} 100%{transform:translateX(-50%)} }
+    @keyframes tRight { 0%{transform:translateX(-50%)} 100%{transform:translateX(0)} }
+    .t-item { font-size: 12px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.14em; padding: 0 24px; }
+    .t-row-1 .t-item { color: rgba(248,246,242,0.7); }
+    .t-row-2 .t-item { color: #C48B2F; }
+    .t-sep { color: rgba(248,246,242,0.2); }
+
+    /* ── SOCIAL PROOF ── */
+    #proof {
+      background: #F8F6F2; padding: 160px 48px;
+    }
+    .proof-grid {
+      max-width: 1200px; margin: 0 auto;
+      display: grid; grid-template-columns: 1fr 1fr; gap: 0;
+    }
+    .proof-left { padding-right: 80px; border-right: 1px solid #E8E4DF; }
+    .proof-right { padding-left: 80px; display: flex; flex-direction: column; justify-content: center; }
+    .proof-eyebrow {
+      font-size: 11px; text-transform: uppercase; letter-spacing: 0.18em; color: #A8A49F; margin-bottom: 48px;
+    }
+    .proof-stats { display: flex; flex-direction: column; gap: 48px; }
+    .proof-stat-row { display: flex; align-items: baseline; gap: 0; }
+    .p-num {
+      font-size: clamp(80px, 12vw, 160px); font-weight: 600;
+      letter-spacing: -0.04em; line-height: 1; color: #0D0D0D;
+    }
+    .p-plus { font-size: clamp(40px, 6vw, 80px); font-weight: 600; color: #C48B2F; }
+    .p-label {
+      font-size: 15px; color: #6B6866; line-height: 1.4; margin-left: 16px;
+      align-self: center; max-width: 140px;
+    }
+    .proof-quote {
+      font-size: clamp(22px, 2.5vw, 32px); font-weight: 500; line-height: 1.3;
+      color: #0D0D0D; max-width: 380px; margin-bottom: 48px;
+      letter-spacing: -0.02em;
+    }
+    .proof-quote em { font-style: normal; color: #C48B2F; }
+    .logo-row { display: flex; gap: 12px; flex-wrap: wrap; }
+    .logo-ph {
+      width: 120px; height: 40px; background: #E8E4DF; border-radius: 6px;
+      transition: background 200ms;
+    }
+    .logo-ph:hover { background: #D8D4CF; }
+
+    /* ── CTA FINAL ── */
+    #cta {
+      background: #0D0D0D; padding: 160px 48px;
+      display: flex; flex-direction: column; align-items: flex-start;
+    }
+    .cta-inner { max-width: 1200px; margin: 0 auto; width: 100%; }
+    .cta-eyebrow {
+      font-size: 11px; text-transform: uppercase; letter-spacing: 0.18em;
+      color: #C48B2F; margin-bottom: 32px;
+    }
+    .cta-big {
+      font-size: clamp(48px, 7vw, 110px); font-weight: 600;
+      letter-spacing: -0.04em; line-height: 0.95; color: #F8F6F2;
+      max-width: 900px; margin-bottom: 64px;
+    }
+    .cta-big .muted { color: rgba(248,246,242,0.3); }
+    .cta-row { display: flex; align-items: center; gap: 24px; flex-wrap: wrap; }
+    .cta-btn {
+      background: #C48B2F; color: #FFFFFF; font-family: 'Inter', sans-serif;
+      font-size: 14px; font-weight: 500; letter-spacing: 0.02em;
+      padding: 16px 40px; border-radius: 100px; border: none;
+      transition: background 250ms, transform 250ms, box-shadow 250ms;
+    }
+    .cta-btn:hover { background: #E8A94A; transform: translateY(-2px); box-shadow: 0 0 40px rgba(196,139,47,0.4); }
+    .cta-sub-link {
+      font-size: 14px; color: rgba(248,246,242,0.4);
+      transition: color 200ms;
+    }
+    .cta-sub-link:hover { color: #F8F6F2; }
+
+    /* ── FOOTER ── */
+    #footer {
+      background: #0A0C16; border-top: 1px solid #1A1D26;
+      padding: 64px 48px 40px;
+    }
+    .footer-grid {
+      max-width: 1200px; margin: 0 auto;
+      display: flex; flex-direction: column; gap: 48px;
+    }
+    .footer-top {
+      display: flex; align-items: flex-start; justify-content: space-between;
+      flex-wrap: wrap; gap: 32px;
+    }
+    .f-logo { font-size: 16px; font-weight: 600; color: #F8F6F2; transition: color 200ms; }
+    .f-logo:hover { color: #C48B2F; }
+    .f-nav { display: flex; gap: 32px; list-style: none; flex-wrap: wrap; }
+    .f-nav a {
+      font-size: 14px; color: #6B6866; transition: color 200ms; position: relative;
+    }
+    .f-nav a:hover { color: #F8F6F2; }
+    .f-nav a::after {
+      content: ''; position: absolute; bottom: -2px; left: 0;
+      width: 0; height: 1px; background: #C48B2F; transition: width 300ms ease;
+    }
+    .f-nav a:hover::after { width: 100%; }
+    .f-socials { display: flex; gap: 10px; }
+    .f-social {
+      width: 32px; height: 32px; border-radius: 50%; border: 1px solid #1A1D26;
+      display: flex; align-items: center; justify-content: center;
+      transition: border-color 200ms;
+    }
+    .f-social:hover { border-color: #C48B2F; }
+    .f-social svg { width: 13px; height: 13px; color: #6B6866; }
+    .footer-bottom {
+      display: flex; align-items: center; justify-content: space-between;
+      border-top: 1px solid #1A1D26; padding-top: 24px; flex-wrap: wrap; gap: 16px;
+    }
+    .f-copy { font-size: 13px; color: #6B6866; }
+
+    /* ── WILL ANIMATE ── */
+    .will-animate {
+      opacity: 0; transform: translateY(24px);
+      transition: opacity 700ms cubic-bezier(0.22,1,0.36,1), transform 700ms cubic-bezier(0.22,1,0.36,1);
+    }
+    .will-animate.in { opacity: 1; transform: none; }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 900px) {
+      .nav-links { display: none; }
+      .nav-inner { padding: 0 24px; }
+      #hero { padding: 0 24px 64px; }
+      .hero-top-label, .hero-top-right { left: 24px; right: 24px; }
+      #process, #bridge, #proof, #cta, #footer { padding-left: 24px; padding-right: 24px; }
+      .p-card { padding: 0 24px; gap: 32px; min-width: 100vw; }
+      .p-card-num { width: 120px; font-size: 80px; }
+      .proof-grid { grid-template-columns: 1fr; }
+      .proof-left { border-right: none; padding-right: 0; border-bottom: 1px solid #E8E4DF; padding-bottom: 64px; margin-bottom: 64px; }
+      .proof-right { padding-left: 0; }
+      .process-header { flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- CURSOR -->
+  <div id="cur-dot"></div>
+  <div id="cur-ring"></div>
+
+  <!-- NAVBAR -->
+  <nav id="nav">
+    <div class="nav-inner">
+      <a href="#" class="nav-logo" id="nl">KoBa Studio</a>
+      <ul class="nav-links">
+        <li><a href="Servicios.html" id="nl1">Servicios</a></li>
+        <li><a href="Proceso.html" id="nl2">Proceso</a></li>
+        <li><a href="Productos.html" id="nl3">Productos</a></li>
+        <li><a href="Contacto.html" id="nl4">Contacto</a></li>
+      </ul>
+      <button id="btn-login" class="nav-btn">Iniciar sesión</button>
+      <a href="dashboard.html" id="btn-profile" class="nav-btn" style="display:none">Mi perfil</a>
+      <button id="btn-logout" class="nav-btn" style="display:none">Cerrar sesión</button>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <section id="hero">
+    <div class="hero-scroll-line" id="scroll-line" style="height:0"></div>
+
+    <span class="hero-top-label" id="htl">KOBA-STUDIO · 2025</span>
+    <span class="hero-top-right" id="htr">SaaS B2B · Personalizado</span>
+
+    <div>
+      <h1 class="hero-headline" id="hero-hl">
+        <span class="word"><span class="word-inner">Menos</span></span>
+        <span class="word"><span class="word-inner">tiempo</span></span>
+        <span class="word"><span class="word-inner" style="transition-delay:80ms">perdido.</span></span>
+        <br style="line-height:1">
+        <span class="word"><span class="word-inner accent" style="transition-delay:200ms">Más</span></span>
+        <span class="word"><span class="word-inner" style="transition-delay:280ms">control.</span></span>
+      </h1>
+    </div>
+
+    <div class="hero-bottom">
+      <p class="hero-sub" id="hs">
+        Software hecho para tu operación,<br/>no al revés.
+      </p>
+      <div class="hero-cta" id="hc">
+        <a href="Servicios.html" class="btn-gold">Ver soluciones</a>
+        <a href="Contacto.html" class="btn-outline">
+          Busquemos soluciones
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- MARQUEE -->
+  <div class="marquee-section">
+    <div class="marquee-track">
+      <span class="marquee-item">SaaS personalizado</span><span class="marquee-dot">◆</span>
+      <span class="marquee-item">Automatización real</span><span class="marquee-dot">◆</span>
+      <span class="marquee-item">KoBa Studio</span><span class="marquee-dot">◆</span>
+      <span class="marquee-item">Flujos sin fricción</span><span class="marquee-dot">◆</span>
+      <span class="marquee-item">Control total</span><span class="marquee-dot">◆</span>
+      <span class="marquee-item">Resultados medibles</span><span class="marquee-dot">◆</span>
+      <span class="marquee-item">SaaS personalizado</span><span class="marquee-dot">◆</span>
+      <span class="marquee-item">Automatización real</span><span class="marquee-dot">◆</span>
+      <span class="marquee-item">KoBa Studio</span><span class="marquee-dot">◆</span>
+      <span class="marquee-item">Flujos sin fricción</span><span class="marquee-dot">◆</span>
+      <span class="marquee-item">Control total</span><span class="marquee-dot">◆</span>
+      <span class="marquee-item">Resultados medibles</span><span class="marquee-dot">◆</span>
+    </div>
+  </div>
+
+  <!-- PROCESS (scroll-driven horizontal) -->
+  <section id="process">
+    <div class="process-header">
+      <div>
+        <p class="process-eyebrow will-animate">Nuestro proceso</p>
+        <h2 class="process-title will-animate" style="transition-delay:100ms">Cuatro pasos.<br/>Un resultado.</h2>
+      </div>
+      <p class="process-desc will-animate" style="transition-delay:200ms">
+        Cada proyecto pasa por el mismo sistema probado: entender tu operación, diseñar la solución, construirla sin atajos, y acompañarte después del lanzamiento.
+      </p>
+    </div>
+  </section>
+
+  <div id="process-scroll">
+    <div class="process-sticky" id="proc-sticky">
+      <div class="process-cards-track" id="proc-track">
+
+        <!-- Card 01 -->
+        <div class="p-card active" id="pc1">
+          <div class="p-card-num">01</div>
+          <div class="p-card-content">
+            <div class="p-card-code">
+              <div class="p-card-code-dot"></div>
+              KOBA-001 · Diagnóstico
+            </div>
+            <h3 class="p-card-title">Diagnóstico</h3>
+            <ul class="p-card-list">
+              <li><span class="dash">—</span> Análisis de procesos existentes</li>
+              <li><span class="dash">—</span> Identificación de fricciones clave</li>
+              <li><span class="dash">—</span> Mapeo de flujos de trabajo</li>
+              <li><span class="dash">—</span> Propuesta a medida sin compromisos</li>
+            </ul>
+            <span class="p-card-tag">Paso 1 de 4</span>
+          </div>
+        </div>
+
+        <!-- Card 02 -->
+        <div class="p-card" id="pc2">
+          <div class="p-card-num">02</div>
+          <div class="p-card-content">
+            <div class="p-card-code">
+              <div class="p-card-code-dot"></div>
+              KOBA-002 · Diseño
+            </div>
+            <h3 class="p-card-title">Diseño</h3>
+            <ul class="p-card-list">
+              <li><span class="dash">—</span> Arquitectura de producto</li>
+              <li><span class="dash">—</span> Prototipo funcional en 2 semanas</li>
+              <li><span class="dash">—</span> Sistema de diseño a medida</li>
+              <li><span class="dash">—</span> Revisiones ilimitadas</li>
+            </ul>
+            <span class="p-card-tag">Paso 2 de 4</span>
+          </div>
+        </div>
+
+        <!-- Card 03 -->
+        <div class="p-card" id="pc3">
+          <div class="p-card-num">03</div>
+          <div class="p-card-content">
+            <div class="p-card-code">
+              <div class="p-card-code-dot"></div>
+              KOBA-003 · Construcción
+            </div>
+            <h3 class="p-card-title">Construcción</h3>
+            <ul class="p-card-list">
+              <li><span class="dash">—</span> Desarrollo ágil por sprints</li>
+              <li><span class="dash">—</span> Integraciones con tu stack actual</li>
+              <li><span class="dash">—</span> Testing exhaustivo</li>
+              <li><span class="dash">—</span> Sin deuda técnica</li>
+            </ul>
+            <span class="p-card-tag">Paso 3 de 4</span>
+          </div>
+        </div>
+
+        <!-- Card 04 -->
+        <div class="p-card" id="pc4">
+          <div class="p-card-num">04</div>
+          <div class="p-card-content">
+            <div class="p-card-code">
+              <div class="p-card-code-dot"></div>
+              KOBA-004 · Entrega
+            </div>
+            <h3 class="p-card-title">Entrega</h3>
+            <ul class="p-card-list">
+              <li><span class="dash">—</span> Despliegue en tu infraestructura</li>
+              <li><span class="dash">—</span> Documentación técnica completa</li>
+              <li><span class="dash">—</span> Soporte post-lanzamiento</li>
+              <li><span class="dash">—</span> Iteración continua</li>
+            </ul>
+            <span class="p-card-tag">Paso 4 de 4</span>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Progress dots -->
+      <div class="process-progress" id="proc-progress">
+        <div class="prog-dot active" data-idx="0"></div>
+        <div class="prog-dot" data-idx="1"></div>
+        <div class="prog-dot" data-idx="2"></div>
+        <div class="prog-dot" data-idx="3"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- BRIDGE -->
+  <section id="bridge">
+    <div class="bridge-inner">
+      <div class="bridge-big">
+        <div class="will-animate">
+          <span class="line-inner">Tu operación,</span>
+        </div>
+        <div class="will-animate" style="transition-delay:0ms">
+          <span class="line-inner accent">automatizada.</span>
+        </div>
+        <div class="will-animate" style="transition-delay:0ms">
+          <span class="line-inner light">Sin genéricos.</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TICKER dark -->
+  <div id="ticker">
+    <div class="t-row t-row-1">
+      <div class="t-track">
+        <span class="t-item">SaaS personalizado</span><span class="t-sep">·</span>
+        <span class="t-item">Automatización real</span><span class="t-sep">·</span>
+        <span class="t-item">KoBa Studio</span><span class="t-sep">·</span>
+        <span class="t-item">Flujos sin fricción</span><span class="t-sep">·</span>
+        <span class="t-item">Control total</span><span class="t-sep">·</span>
+        <span class="t-item">Sin bugs</span><span class="t-sep">·</span>
+        <span class="t-item">SaaS personalizado</span><span class="t-sep">·</span>
+        <span class="t-item">Automatización real</span><span class="t-sep">·</span>
+        <span class="t-item">KoBa Studio</span><span class="t-sep">·</span>
+        <span class="t-item">Flujos sin fricción</span><span class="t-sep">·</span>
+        <span class="t-item">Control total</span><span class="t-sep">·</span>
+        <span class="t-item">Sin bugs</span><span class="t-sep">·</span>
+        <span class="t-item">SaaS personalizado</span><span class="t-sep">·</span>
+        <span class="t-item">Automatización real</span><span class="t-sep">·</span>
+        <span class="t-item">KoBa Studio</span><span class="t-sep">·</span>
+        <span class="t-item">Flujos sin fricción</span><span class="t-sep">·</span>
+      </div>
+    </div>
+    <div class="t-row t-row-2" style="margin-top:8px">
+      <div class="t-track-r">
+        <span class="t-item">Operaciones reales</span><span class="t-sep">·</span>
+        <span class="t-item">Software a medida</span><span class="t-sep">·</span>
+        <span class="t-item">Resultados medibles</span><span class="t-sep">·</span>
+        <span class="t-item">Tu tiempo vale</span><span class="t-sep">·</span>
+        <span class="t-item">Operaciones reales</span><span class="t-sep">·</span>
+        <span class="t-item">Software a medida</span><span class="t-sep">·</span>
+        <span class="t-item">Resultados medibles</span><span class="t-sep">·</span>
+        <span class="t-item">Tu tiempo vale</span><span class="t-sep">·</span>
+        <span class="t-item">Operaciones reales</span><span class="t-sep">·</span>
+        <span class="t-item">Software a medida</span><span class="t-sep">·</span>
+        <span class="t-item">Resultados medibles</span><span class="t-sep">·</span>
+        <span class="t-item">Tu tiempo vale</span><span class="t-sep">·</span>
+        <span class="t-item">Operaciones reales</span><span class="t-sep">·</span>
+        <span class="t-item">Software a medida</span><span class="t-sep">·</span>
+        <span class="t-item">Resultados medibles</span><span class="t-sep">·</span>
+        <span class="t-item">Tu tiempo vale</span><span class="t-sep">·</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- SOCIAL PROOF -->
+  <section id="proof">
+    <div class="proof-grid">
+      <div class="proof-left">
+        <p class="proof-eyebrow will-animate">Resultados reales</p>
+        <div class="proof-stats">
+          <div class="proof-stat-row will-animate" style="transition-delay:100ms">
+            <span class="p-num" data-target="2">0</span>
+            <span class="p-plus">+</span>
+            <span class="p-label">empresas automatizadas</span>
+          </div>
+          <div class="proof-stat-row will-animate" style="transition-delay:200ms">
+            <span class="p-num" data-target="3">0</span>
+            <span class="p-plus">+</span>
+            <span class="p-label">proyectos en curso</span>
+          </div>
+          <div class="proof-stat-row will-animate" style="transition-delay:300ms">
+            <span class="p-num" data-target="500">0</span>
+            <span class="p-plus">+</span>
+            <span class="p-label">seguidores en redes</span>
+          </div>
+        </div>
+      </div>
+      <div class="proof-right">
+        <p class="proof-quote will-animate">
+          Un cliente <em>satisfecho</em> hace más que 500 seguidores.
+        </p>
+        <div class="logo-row will-animate" style="transition-delay:150ms">
+          <div class="logo-ph"></div>
+          <div class="logo-ph"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA FINAL -->
+  <section id="cta">
+    <div class="cta-inner">
+      <p class="cta-eyebrow will-animate">¿Listo para empezar?</p>
+      <h2 class="cta-big will-animate" style="transition-delay:100ms">
+        ¿Tu operación tiene<br/>
+        <span class="muted">un problema real?</span>
+      </h2>
+      <div class="cta-row will-animate" style="transition-delay:200ms">
+        <a href="#" class="cta-btn">Ver soluciones</a>
+        <a href="#" class="cta-sub-link">o hablar con el equipo →</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer id="footer">
+    <div class="footer-grid">
+      <div class="footer-top">
+        <a href="#" class="f-logo">KoBa Studio</a>
+        <ul class="f-nav">
+          <li><a href="Servicios.html">Servicios</a></li>
+          <li><a href="Proceso.html">Proceso</a></li>
+          <li><a href="Productos.html">Productos</a></li>
+          <li><a href="Contacto.html">Contacto</a></li>
+        </ul>
+        <div class="f-socials">
+          <a href="#" class="f-social" aria-label="LinkedIn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+          </a>
+          <a href="#" class="f-social" aria-label="Twitter">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"/></svg>
+          </a>
+          <a href="#" class="f-social" aria-label="Instagram">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="0.5" fill="currentColor"/></svg>
+          </a>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p class="f-copy">© 2025 KoBa Studio</p>
+        <p class="f-copy">Soluciones SaaS B2B · Diseño · Automatización</p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    /* ── CURSOR ── */
+    const dot = document.getElementById('cur-dot');
+    const ring = document.getElementById('cur-ring');
+    let mx = window.innerWidth/2, my = window.innerHeight/2;
+    let dx = mx, dy = my, rx = mx, ry = my;
+
+    document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
+
+    function lerp(a,b,t){ return a+(b-a)*t; }
+
+    (function loop(){
+      dx = lerp(dx,mx,0.15); dy = lerp(dy,my,0.15);
+      rx = lerp(rx,mx,0.07); ry = lerp(ry,my,0.07);
+      dot.style.left=dx+'px'; dot.style.top=dy+'px';
+      ring.style.left=rx+'px'; ring.style.top=ry+'px';
+      requestAnimationFrame(loop);
+    })();
+
+    document.querySelectorAll('a,button,.logo-ph').forEach(el=>{
+      el.addEventListener('mouseenter',()=>document.body.classList.add('ch'));
+      el.addEventListener('mouseleave',()=>document.body.classList.remove('ch'));
+    });
+    document.addEventListener('mousedown',()=>{
+      document.body.classList.add('cc');
+      setTimeout(()=>document.body.classList.remove('cc'),180);
+    });
+
+    /* ── NAVBAR ── */
+    const nav = document.getElementById('nav');
+    window.addEventListener('scroll',()=>{
+      nav.classList.toggle('scrolled', window.scrollY > 80);
+    },{passive:true});
+
+    /* Entrance */
+    function navIn(){
+      setTimeout(()=>document.getElementById('nl').classList.add('in'),100);
+      ['nl1','nl2','nl3','nl4'].forEach((id,i)=>setTimeout(()=>document.getElementById(id).classList.add('in'),250+i*100));
+      setTimeout(()=>document.getElementById('btn-login').classList.add('in'),650);
+    }
+    if(document.readyState==='complete') navIn(); else window.addEventListener('load',navIn);
+
+    /* ── HERO ENTRANCE ── */
+    setTimeout(()=>{
+      document.getElementById('htl').classList.add('in');
+      document.getElementById('htr').classList.add('in');
+    },200);
+
+    // Word reveal
+    const words = document.querySelectorAll('.hero-headline .word-inner');
+    words.forEach((w,i)=>{
+      setTimeout(()=>w.classList.add('in'), 400 + i*90);
+    });
+
+    setTimeout(()=>document.getElementById('hs').classList.add('in'),900);
+    setTimeout(()=>document.getElementById('hc').classList.add('in'),1000);
+
+    /* Scroll line grows with scroll */
+    const scrollLine = document.getElementById('scroll-line');
+    window.addEventListener('scroll',()=>{
+      const pct = Math.min(window.scrollY / (window.innerHeight * 0.8), 1);
+      scrollLine.style.height = (pct * 120) + 'px';
+    },{passive:true});
+
+    /* ── PROCESS SCROLL-DRIVEN HORIZONTAL ── */
+    const procScroll = document.getElementById('process-scroll');
+    const procTrack = document.getElementById('proc-track');
+    const pCards = [
+      document.getElementById('pc1'),
+      document.getElementById('pc2'),
+      document.getElementById('pc3'),
+      document.getElementById('pc4'),
+    ];
+    const progDots = document.querySelectorAll('.prog-dot');
+    let currentCard = 0;
+
+    function updateProcess(){
+      const rect = procScroll.getBoundingClientRect();
+      const totalScroll = procScroll.offsetHeight - window.innerHeight;
+      const scrolled = -rect.top;
+      const progress = Math.max(0, Math.min(1, scrolled / totalScroll));
+
+      // Translate the track
+      const maxTranslate = (pCards.length - 1) * window.innerWidth;
+      const tx = -progress * maxTranslate;
+      procTrack.style.transform = `translateX(${tx}px)`;
+
+      // Active card index
+      const rawIdx = progress * (pCards.length - 1);
+      const activeIdx = Math.round(rawIdx);
+
+      if(activeIdx !== currentCard){
+        pCards[currentCard].classList.remove('active');
+        pCards[activeIdx].classList.add('active');
+        progDots[currentCard].classList.remove('active');
+        progDots[activeIdx].classList.add('active');
+        currentCard = activeIdx;
+      }
+    }
+
+    window.addEventListener('scroll', updateProcess, {passive:true});
+    updateProcess();
+
+    /* ── BRIDGE LINE REVEAL ── */
+    // The bridge uses IntersectionObserver below
+
+    /* ── INTERSECTION OBSERVER ── */
+    const io = new IntersectionObserver(entries=>{
+      entries.forEach(entry=>{
+        if(!entry.isIntersecting) return;
+        const el = entry.target;
+        const delay = parseInt(el.style.transitionDelay)||0;
+
+        // Bridge line-inner reveal
+        if(el.classList.contains('will-animate') && el.querySelector('.line-inner')){
+          setTimeout(()=>el.querySelector('.line-inner').classList.add('in'), delay);
+          // stagger siblings
+          const siblings = el.parentElement.querySelectorAll('.will-animate');
+          siblings.forEach((s,i)=>{
+            setTimeout(()=>{
+              const li = s.querySelector('.line-inner');
+              if(li) li.classList.add('in');
+            }, i * 160);
+          });
+          io.unobserve(el);
+          return;
+        }
+
+        setTimeout(()=>{
+          el.classList.add('in');
+          // count-up
+          el.querySelectorAll('.p-num[data-target]').forEach(num=>{
+            countUp(num, parseInt(num.dataset.target), 1200);
+          });
+        }, delay);
+        io.unobserve(el);
+      });
+    },{threshold:0.2});
+
+    document.querySelectorAll('.will-animate').forEach(el=>io.observe(el));
+
+    /* ── COUNT UP ── */
+    function countUp(el, target, dur){
+      const start = performance.now();
+      (function tick(now){
+        const t = Math.min((now-start)/dur,1);
+        const ease = 1-Math.pow(2,-10*t);
+        el.textContent = Math.floor(ease*target);
+        if(t<1) requestAnimationFrame(tick);
+        else el.textContent = target;
+      })(start);
+    }
+  </script>
+
+  <!-- MODAL AUTH -->
+  <div id="modal-auth" class="modal-overlay">
+    <div class="modal-box">
+      <button id="modal-close" class="modal-close-btn">&times;</button>
+      <div class="modal-tabs">
+        <button id="tab-login" class="modal-tab active">Entrar</button>
+        <button id="tab-signup" class="modal-tab">Registrarse</button>
+      </div>
+
+      <form id="form-login" style="display:flex; flex-direction:column; gap:12px">
+        <input id="login-email" type="email" placeholder="Email" required />
+        <input id="login-password" type="password" placeholder="Contraseña" required />
+        <p id="error-login" class="form-error"></p>
+        <button type="submit" class="btn-modal-submit">Entrar</button>
+        <div style="position:relative; text-align:center; margin:8px 0">
+          <span style="background:#FFFFFF; padding:0 8px; position:relative; z-index:1; color:#A8A49F; font-size:12px">o</span>
+          <div style="position:absolute; top:50%; left:0; right:0; height:1px; background:#E8E4DF; z-index:0"></div>
+        </div>
+        <button type="button" id="btn-google" style="display:flex; align-items:center; justify-content:center; gap:8px; background:#FFFFFF; color:#0D0D0D; border:1px solid #E8E4DF; padding:12px 16px; border-radius:8px; font-size:14px; font-weight:500; cursor:pointer; transition:border-color 200ms, background 200ms">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v12M6 12h12"/></svg>
+          Continuar con Google
+        </button>
+      </form>
+
+      <form id="form-signup" style="display:none; flex-direction:column; gap:12px">
+        <input id="signup-email" type="email" placeholder="Email" required />
+        <input id="signup-password" type="password" placeholder="Contraseña (mínimo 6 caracteres)" required />
+        <p id="error-signup" class="form-error"></p>
+        <button type="submit" class="btn-modal-submit">Crear cuenta</button>
+        <div style="position:relative; text-align:center; margin:8px 0">
+          <span style="background:#FFFFFF; padding:0 8px; position:relative; z-index:1; color:#A8A49F; font-size:12px">o</span>
+          <div style="position:absolute; top:50%; left:0; right:0; height:1px; background:#E8E4DF; z-index:0"></div>
+        </div>
+        <button type="button" id="btn-google" style="display:flex; align-items:center; justify-content:center; gap:8px; background:#FFFFFF; color:#0D0D0D; border:1px solid #E8E4DF; padding:12px 16px; border-radius:8px; font-size:14px; font-weight:500; cursor:pointer; transition:border-color 200ms, background 200ms">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v12M6 12h12"/></svg>
+          Continuar con Google
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <script type="module" src="/assets/js/main.js"></script>
+</body>
+</html>

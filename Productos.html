@@ -1,0 +1,763 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Productos — KoBa Studio</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="shared.css" />
+  <style>
+    /* ── PRODUCTOS PAGE ── */
+
+    /* ── HERO ESPECIAL con orbes ── */
+    .prod-hero {
+      min-height: 70vh;
+      display: flex; flex-direction: column;
+      justify-content: flex-end;
+      padding: 0 48px 80px; padding-top: 120px;
+      background: #F8F6F2;
+      position: relative; overflow: hidden;
+    }
+    /* Orbes decorativos de fondo */
+    .orb {
+      position: absolute; border-radius: 50%;
+      pointer-events: none; filter: blur(60px);
+    }
+    .orb-1 {
+      width: 400px; height: 400px;
+      background: var(--orb-violet);
+      top: -80px; right: 10%;
+      opacity: 0;
+      transition: opacity 1200ms ease 400ms;
+    }
+    .orb-2 {
+      width: 300px; height: 300px;
+      background: var(--orb-pink);
+      bottom: 0; right: 30%;
+      opacity: 0;
+      transition: opacity 1200ms ease 600ms;
+    }
+    .orb-3 {
+      width: 350px; height: 350px;
+      background: var(--orb-blue);
+      top: 20%; left: -80px;
+      opacity: 0;
+      transition: opacity 1200ms ease 500ms;
+    }
+    .orbs-in .orb { opacity: 1; }
+    .prod-hero-eyebrow {
+      font-size: 11px; text-transform: uppercase; letter-spacing: 0.18em;
+      color: #A8A49F; margin-bottom: 24px; position: relative; z-index: 2;
+    }
+    .prod-hero-hl {
+      font-size: clamp(56px, 8vw, 120px); font-weight: 600;
+      letter-spacing: -0.04em; line-height: 0.95;
+      color: #0D0D0D; max-width: 900px;
+      position: relative; z-index: 2;
+    }
+    .prod-hero-hl .word { display: inline-block; overflow: hidden; vertical-align: bottom; }
+    .prod-hero-hl .word-inner {
+      display: block; transform: translateY(110%);
+      transition: transform 800ms cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .prod-hero-hl .word-inner.in { transform: translateY(0); }
+    .prod-hero-sub {
+      font-size: 16px; color: #6B6866; line-height: 1.7; max-width: 440px;
+      margin-top: 40px; position: relative; z-index: 2;
+      opacity: 0; transition: opacity 600ms ease 900ms;
+    }
+    .prod-hero-sub.in { opacity: 1; }
+
+    /* ── PRODUCT CATEGORIES TABS ── */
+    .prod-tabs-bar {
+      border-top: 1px solid #E8E4DF; border-bottom: 1px solid #E8E4DF;
+      padding: 0 48px; display: flex; gap: 0; overflow-x: auto;
+      position: sticky; top: 52px; z-index: 90;
+      background: rgba(255,255,255,0.95);
+      backdrop-filter: blur(12px);
+    }
+    .prod-tab {
+      font-size: 13px; font-weight: 500; color: #A8A49F;
+      padding: 18px 24px; border-bottom: 2px solid transparent;
+      white-space: nowrap; transition: color 200ms, border-color 200ms;
+      text-decoration: none;
+    }
+    .prod-tab:hover { color: #0D0D0D; }
+    .prod-tab.active { color: #0D0D0D; border-bottom-image: linear-gradient(90deg, #7B6FE8, #E8507A); border-bottom-width: 2px; }
+
+    /* ── PRODUCT SECTION ── */
+    .prod-section { padding: 100px 48px; max-width: 1200px; margin: 0 auto; }
+    .prod-section + .prod-section { padding-top: 0; }
+    .prod-section-header {
+      display: flex; align-items: flex-end; justify-content: space-between;
+      margin-bottom: 56px; flex-wrap: wrap; gap: 24px;
+    }
+    .prod-section-eyebrow {
+      font-size: 11px; text-transform: uppercase; letter-spacing: 0.18em;
+      color: #A8A49F; margin-bottom: 16px;
+    }
+    .prod-section-title {
+      font-size: clamp(32px, 4vw, 52px); font-weight: 600;
+      letter-spacing: -0.03em; line-height: 1; color: #0D0D0D;
+    }
+    .prod-section-desc {
+      font-size: 15px; color: #6B6866; line-height: 1.7; max-width: 360px;
+    }
+
+    /* Product cards grid */
+    .prod-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: #E8E4DF; border: 1px solid #E8E4DF; border-radius: 16px; overflow: hidden; }
+    .prod-grid-2 { grid-template-columns: repeat(2, 1fr); }
+    .prod-card {
+      background: #FFFFFF; padding: 40px 36px;
+      display: flex; flex-direction: column;
+      transition: background 300ms; position: relative; overflow: hidden;
+    }
+    .prod-card:hover { background: #F8F6F2; }
+    .prod-card.dark { background: #0D0D0D; }
+    .prod-card.dark:hover { background: #161920; }
+    .prod-card-badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-size: 10px; font-weight: 500; text-transform: uppercase;
+      letter-spacing: 0.15em; padding: 5px 12px; border-radius: 100px;
+      margin-bottom: 28px; width: fit-content;
+    }
+    .prod-card-badge.gold { background: rgba(123,111,232,0.15); color: #7B6FE8; }
+    .prod-card-badge.iris { background: rgba(123,111,232,0.1); color: #7B6FE8; }
+    .prod-card-badge.soon { background: rgba(168,164,159,0.1); color: #A8A49F; }
+    .prod-card-badge-dot { width: 4px; height: 4px; border-radius: 50%; background: currentColor; }
+    .prod-card-name {
+      font-size: 24px; font-weight: 600; letter-spacing: -0.02em;
+      color: #0D0D0D; margin-bottom: 12px; line-height: 1.1;
+    }
+    .prod-card.dark .prod-card-name { color: #F8F6F2; }
+    .prod-card-tagline {
+      font-size: 14px; color: #6B6866; line-height: 1.6; margin-bottom: 28px; flex: 1;
+    }
+    .prod-card.dark .prod-card-tagline { color: rgba(248,246,242,0.5); }
+    .prod-card-features { list-style: none; margin-bottom: 32px; }
+    .prod-card-features li {
+      font-size: 13px; color: #6B6866; padding: 8px 0;
+      border-top: 1px solid #F0EDE8;
+      display: flex; align-items: baseline; gap: 8px;
+    }
+    .prod-card.dark .prod-card-features li {
+      color: rgba(248,246,242,0.55);
+      border-top-color: rgba(248,246,242,0.07);
+    }
+    .prod-card-features li:last-child { border-bottom: 1px solid #F0EDE8; }
+    .prod-card.dark .prod-card-features li:last-child { border-bottom-color: rgba(248,246,242,0.07); }
+    .pf-dash { color: #7B6FE8; flex-shrink: 0; font-size: 12px; }
+    .prod-card-price {
+      display: flex; align-items: baseline; gap: 4px; margin-bottom: 24px;
+    }
+    .price-from { font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; color: #A8A49F; align-self: center; margin-right: 4px; }
+    .prod-card.dark .price-from { color: rgba(248,246,242,0.3); }
+    .price-val {
+      font-size: 36px; font-weight: 600; letter-spacing: -0.03em; color: #0D0D0D;
+    }
+    .prod-card.dark .price-val { color: #F8F6F2; }
+    .price-per { font-size: 13px; color: #A8A49F; align-self: flex-end; padding-bottom: 4px; }
+    .prod-card.dark .price-per { color: rgba(248,246,242,0.3); }
+    .prod-card-cta {
+      font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 500;
+      letter-spacing: 0.02em; padding: 12px 24px; border-radius: 100px;
+      border: 1px solid #E8E4DF; color: #0D0D0D; background: transparent;
+      display: inline-flex; align-items: center; gap: 8px;
+      transition: background 200ms, color 200ms, border-color 200ms;
+      text-decoration: none; width: fit-content;
+    }
+    .prod-card-cta:hover { background: #0D0D0D; color: #FFFFFF; border-color: #0D0D0D; }
+    .prod-card.dark .prod-card-cta {
+      background: linear-gradient(135deg, #7B6FE8, #C060C8, #E8507A);
+      background-size: 200% 200%;
+      color: #FFFFFF;
+      border-color: transparent;
+      animation: gradShift 4s ease infinite;
+    }
+    .prod-card.dark .prod-card-cta:hover { background: linear-gradient(135deg, #8E7DFF, #D0649F); border-color: transparent; animation-play-state: paused; }
+    .prod-card-soon-overlay {
+      position: absolute; inset: 0; background: rgba(248,246,242,0.7);
+      backdrop-filter: blur(2px); display: flex; align-items: center; justify-content: center;
+    }
+    .soon-label {
+      font-size: 11px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.2em;
+      color: #A8A49F; border: 1px solid #E8E4DF; padding: 8px 20px; border-radius: 100px;
+      background: #FFFFFF;
+    }
+
+    /* ── CRYSTAL SECTION (preview componente futuro) ── */
+    .crystal-section {
+      background: #0A0C16;
+      padding: 120px 48px;
+      position: relative; overflow: hidden;
+    }
+    .crystal-section-inner { max-width: 1200px; margin: 0 auto; }
+    .crystal-eyebrow {
+      font-size: 11px; text-transform: uppercase; letter-spacing: 0.18em;
+      color: rgba(248,246,242,0.3); margin-bottom: 24px;
+    }
+    .crystal-headline {
+      font-size: clamp(40px, 5vw, 72px); font-weight: 600;
+      letter-spacing: -0.04em; line-height: 1; margin-bottom: 16px;
+    }
+    /* Iris text on dark bg */
+    .crystal-headline .iris {
+      background: var(--grad-iris);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text; background-size: 200% 200%;
+      animation: irisShift 5s ease infinite;
+    }
+    .crystal-headline .plain { color: rgba(248,246,242,0.2); }
+    .crystal-sub {
+      font-size: 16px; color: rgba(248,246,242,0.4); line-height: 1.7;
+      max-width: 480px; margin-bottom: 64px;
+    }
+
+    /* Crystal card component */
+    .crystal-cards { display: flex; gap: 24px; flex-wrap: wrap; }
+    .crystal-card {
+      flex: 1; min-width: 260px; max-width: 360px;
+      border-radius: 20px; padding: 2px;
+      background: var(--grad-crystal);
+      position: relative;
+      transition: transform 400ms ease, box-shadow 400ms ease;
+    }
+    .crystal-card:hover {
+      transform: translateY(-4px) rotate(0.5deg);
+      box-shadow: 0 20px 60px rgba(123,111,232,0.25), 0 0 40px rgba(107,188,232,0.15);
+    }
+    .crystal-card-inner {
+      background: #0D0D0D;
+      border-radius: 18px; padding: 36px 32px;
+      height: 100%;
+      display: flex; flex-direction: column; gap: 16px;
+    }
+    .crystal-card-label {
+      font-size: 10px; text-transform: uppercase; letter-spacing: 0.2em;
+      color: rgba(248,246,242,0.3);
+    }
+    .crystal-card-name {
+      font-size: 22px; font-weight: 600; letter-spacing: -0.02em;
+    }
+    /* Each card name gets a different iris hue */
+    .crystal-card:nth-child(1) .crystal-card-name {
+      background: linear-gradient(135deg, #7B6FE8, #C060C8);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    }
+    .crystal-card:nth-child(2) .crystal-card-name {
+      background: linear-gradient(135deg, #E8A94A, #E8507A);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    }
+    .crystal-card:nth-child(3) .crystal-card-name {
+      background: linear-gradient(135deg, #6BBCE8, #7B6FE8);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    }
+    .crystal-card-desc { font-size: 13px; color: rgba(248,246,242,0.45); line-height: 1.6; flex: 1; }
+    .crystal-card-tag {
+      font-size: 10px; text-transform: uppercase; letter-spacing: 0.15em;
+      color: rgba(248,246,242,0.2); border-top: 1px solid rgba(248,246,242,0.07);
+      padding-top: 16px; margin-top: auto;
+    }
+
+    /* Floating orbs on crystal section */
+    .crystal-orb {
+      position: absolute; border-radius: 50%; filter: blur(80px);
+      pointer-events: none;
+    }
+    .crystal-orb-1 {
+      width: 500px; height: 500px;
+      background: var(--orb-violet);
+      top: -100px; right: -100px; opacity: 0.4;
+    }
+    .crystal-orb-2 {
+      width: 400px; height: 400px;
+      background: var(--orb-blue);
+      bottom: -80px; left: 20%; opacity: 0.3;
+    }
+    .crystal-orb-3 {
+      width: 300px; height: 300px;
+      background: var(--orb-pink);
+      top: 40%; left: -60px; opacity: 0.25;
+    }
+
+    /* ── DIVIDER SECTION ── */
+    .prod-divider { height: 1px; background: #E8E4DF; margin: 0 48px; }
+
+    /* ── CTA ── */
+    .prod-cta {
+      background: #0D0D0D; padding: 120px 48px; text-align: center;
+    }
+
+    @media (max-width: 900px) {
+      .prod-hero, .prod-section, .prod-cta, .crystal-section { padding-left: 24px; padding-right: 24px; }
+      .prod-grid { grid-template-columns: 1fr; }
+      .prod-grid-2 { grid-template-columns: 1fr; }
+      .prod-tabs-bar { padding: 0 24px; }
+      .crystal-cards { flex-direction: column; }
+      .prod-divider { margin: 0 24px; }
+    }
+  </style>
+</head>
+<body>
+
+  <div id="cur-dot"></div>
+  <div id="cur-ring"></div>
+
+  <nav id="nav">
+    <div class="nav-inner">
+      <a href="KoBa Studio v2.html" class="nav-logo" id="nl">KoBa Studio</a>
+      <ul class="nav-links">
+        <li><a href="Servicios.html" id="nl1">Servicios</a></li>
+        <li><a href="Proceso.html" id="nl2">Proceso</a></li>
+        <li><a href="Productos.html" id="nl3" class="active">Productos</a></li>
+        <li><a href="Contacto.html" id="nl4">Contacto</a></li>
+      </ul>
+      <button id="btn-login" class="nav-btn">Iniciar sesión</button>
+      <a href="dashboard.html" id="btn-profile" class="nav-btn" style="display:none">Mi perfil</a>
+      <button id="btn-logout" class="nav-btn" style="display:none">Cerrar sesión</button>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <header class="prod-hero" id="prod-hero">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+
+    <p class="prod-hero-eyebrow wa">KBA · Productos</p>
+    <h1 class="prod-hero-hl" id="ph">
+      <span class="word"><span class="word-inner">Software</span></span>
+      <span class="word"><span class="word-inner" style="transition-delay:80ms">listo</span></span>
+      <span class="word"><span class="word-inner" style="transition-delay:160ms">para</span></span>
+      <br style="line-height:1">
+      <span class="word"><span class="word-inner" style="transition-delay:240ms">tu</span></span>
+      <span class="word"><span class="word-inner" style="transition-delay:320ms; background: var(--grad-iris); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; background-size: 200%; animation: irisShift 5s ease infinite;">operación.</span></span>
+    </h1>
+    <p class="prod-hero-sub" id="phs">
+      Dos categorías: SaaS propios listos para desplegar, y desarrollos 100% a medida. Cada producto tiene su estructura de precio independiente.
+    </p>
+  </header>
+
+  <!-- TABS -->
+  <div class="prod-tabs-bar">
+    <a href="#saas" class="prod-tab active" data-tab="saas">SaaS Listos</a>
+    <a href="#custom" class="prod-tab" data-tab="custom">A Medida</a>
+    <a href="#futuro" class="prod-tab" data-tab="futuro">Próximamente</a>
+  </div>
+
+  <!-- MARQUEE -->
+  <div class="marquee-bar">
+    <div class="mq-track">
+      <span class="mq-item">SaaS listos</span><span class="mq-dot">◆</span>
+      <span class="mq-item">A medida</span><span class="mq-dot">◆</span>
+      <span class="mq-item">Precio por producto</span><span class="mq-dot">◆</span>
+      <span class="mq-item">Sin genéricos</span><span class="mq-dot">◆</span>
+      <span class="mq-item">KoBa Studio</span><span class="mq-dot">◆</span>
+      <span class="mq-item">SaaS listos</span><span class="mq-dot">◆</span>
+      <span class="mq-item">A medida</span><span class="mq-dot">◆</span>
+      <span class="mq-item">Precio por producto</span><span class="mq-dot">◆</span>
+      <span class="mq-item">Sin genéricos</span><span class="mq-dot">◆</span>
+      <span class="mq-item">KoBa Studio</span><span class="mq-dot">◆</span>
+    </div>
+  </div>
+
+  <!-- SECCIÓN SaaS LISTOS -->
+  <div id="saas">
+    <section class="prod-section">
+      <div class="prod-section-header">
+        <div>
+          <p class="prod-section-eyebrow wa">KBA · SaaS Listos</p>
+          <h2 class="prod-section-title wa" style="transition-delay:80ms">Productos<br/>propios.</h2>
+        </div>
+        <p class="prod-section-desc wa" style="transition-delay:160ms">
+          Software desarrollado por KoBa que podés activar en tu operación en días. Base probada, configuración a tu medida.
+        </p>
+      </div>
+
+      <div class="prod-grid">
+
+        <!-- Producto 1 -->
+        <div class="prod-card wa">
+          <div class="prod-card-badge gold"><div class="prod-card-badge-dot"></div>Disponible</div>
+          <h3 class="prod-card-name">KoBa Ops</h3>
+          <p class="prod-card-tagline">Centro de control operacional para equipos B2B. Gestión de tareas, flujos de aprobación y reportes en un solo lugar.</p>
+          <ul class="prod-card-features">
+            <li><span class="pf-dash">—</span>Gestión de proyectos y tareas</li>
+            <li><span class="pf-dash">—</span>Flujos de aprobación automáticos</li>
+            <li><span class="pf-dash">—</span>Dashboard de métricas en tiempo real</li>
+            <li><span class="pf-dash">—</span>Integraciones con Slack, Email, WhatsApp</li>
+          </ul>
+          <div class="prod-card-price">
+            <span class="price-from">Desde</span>
+            <span class="price-val">$290</span>
+            <span class="price-per">/ mes</span>
+          </div>
+          <a href="Contacto.html" class="prod-card-cta">Ver demo →</a>
+        </div>
+
+        <!-- Producto 2: featured dark -->
+        <div class="prod-card dark wa" style="transition-delay:100ms">
+          <div class="prod-card-badge gold"><div class="prod-card-badge-dot"></div>Más solicitado</div>
+          <h3 class="prod-card-name">KoBa Flow</h3>
+          <p class="prod-card-tagline">Motor de automatización de procesos. Conecta tus herramientas, elimina tareas manuales y ejecuta flujos complejos sin código.</p>
+          <ul class="prod-card-features">
+            <li><span class="pf-dash">—</span>Constructor visual de flujos</li>
+            <li><span class="pf-dash">—</span>+50 conectores nativos</li>
+            <li><span class="pf-dash">—</span>Triggers por evento, tiempo o condición</li>
+            <li><span class="pf-dash">—</span>Logs y auditoría completa</li>
+          </ul>
+          <div class="prod-card-price">
+            <span class="price-from">Desde</span>
+            <span class="price-val">$490</span>
+            <span class="price-per">/ mes</span>
+          </div>
+          <a href="Contacto.html" class="prod-card-cta">Ver demo →</a>
+        </div>
+
+        <!-- Producto 3 -->
+        <div class="prod-card wa" style="transition-delay:200ms">
+          <div class="prod-card-badge gold"><div class="prod-card-badge-dot"></div>Disponible</div>
+          <h3 class="prod-card-name">KoBa Pulse</h3>
+          <p class="prod-card-tagline">Panel de inteligencia operacional. Centraliza métricas de todas tus herramientas y genera reportes automáticos para tu equipo directivo.</p>
+          <ul class="prod-card-features">
+            <li><span class="pf-dash">—</span>Centralización de métricas multi-fuente</li>
+            <li><span class="pf-dash">—</span>Reportes automáticos programados</li>
+            <li><span class="pf-dash">—</span>Alertas por umbrales críticos</li>
+            <li><span class="pf-dash">—</span>Exportación PDF / Slides</li>
+          </ul>
+          <div class="prod-card-price">
+            <span class="price-from">Desde</span>
+            <span class="price-val">$190</span>
+            <span class="price-per">/ mes</span>
+          </div>
+          <a href="Contacto.html" class="prod-card-cta">Ver demo →</a>
+        </div>
+
+      </div>
+    </section>
+  </div>
+
+  <div class="prod-divider"></div>
+
+  <!-- SECCIÓN A MEDIDA -->
+  <div id="custom">
+    <section class="prod-section">
+      <div class="prod-section-header">
+        <div>
+          <p class="prod-section-eyebrow wa">KBA · A Medida</p>
+          <h2 class="prod-section-title wa" style="transition-delay:80ms">Tu software,<br/>tu precio.</h2>
+        </div>
+        <p class="prod-section-desc wa" style="transition-delay:160ms">
+          Desarrollos 100% personalizados para tu operación específica. Cada proyecto tiene su propuesta y precio independiente.
+        </p>
+      </div>
+
+      <div class="prod-grid prod-grid-2">
+
+        <!-- Custom 1 -->
+        <div class="prod-card wa">
+          <div class="prod-card-badge iris"><div class="prod-card-badge-dot"></div>A medida</div>
+          <h3 class="prod-card-name">Portal de Clientes</h3>
+          <p class="prod-card-tagline">Plataforma white-label para que tus clientes gestionen sus contratos, pagos, tickets y comunicación con tu empresa. Tu marca, tus reglas.</p>
+          <ul class="prod-card-features">
+            <li><span class="pf-dash">—</span>Portal 100% branded</li>
+            <li><span class="pf-dash">—</span>Gestión de contratos y pagos</li>
+            <li><span class="pf-dash">—</span>Sistema de tickets integrado</li>
+            <li><span class="pf-dash">—</span>Notificaciones multicanal</li>
+          </ul>
+          <div class="prod-card-price">
+            <span class="price-val" style="font-size:28px;">Cotización</span>
+          </div>
+          <a href="Contacto.html" class="prod-card-cta">Consultar →</a>
+        </div>
+
+        <!-- Custom 2 -->
+        <div class="prod-card wa" style="transition-delay:100ms">
+          <div class="prod-card-badge iris"><div class="prod-card-badge-dot"></div>A medida</div>
+          <h3 class="prod-card-name">ERP Sectorial</h3>
+          <p class="prod-card-tagline">Sistema de gestión empresarial diseñado específicamente para las particularidades de tu industria. Sin módulos que no usarás.</p>
+          <ul class="prod-card-features">
+            <li><span class="pf-dash">—</span>Módulos según tu operación</li>
+            <li><span class="pf-dash">—</span>Integraciones con sistemas legados</li>
+            <li><span class="pf-dash">—</span>Roles y permisos granulares</li>
+            <li><span class="pf-dash">—</span>API propia para extensiones futuras</li>
+          </ul>
+          <div class="prod-card-price">
+            <span class="price-val" style="font-size:28px;">Cotización</span>
+          </div>
+          <a href="Contacto.html" class="prod-card-cta">Consultar →</a>
+        </div>
+
+      </div>
+    </section>
+  </div>
+
+  <div class="prod-divider"></div>
+
+  <!-- SECCIÓN PRÓXIMAMENTE con crystal cards -->
+  <div id="futuro">
+    <section class="prod-section">
+      <div class="prod-section-header">
+        <div>
+          <p class="prod-section-eyebrow wa">KBA · Próximamente</p>
+          <h2 class="prod-section-title wa" style="transition-delay:80ms">En desarrollo.</h2>
+        </div>
+        <p class="prod-section-desc wa" style="transition-delay:160ms">
+          Productos en construcción. Podés registrarte para acceso anticipado.
+        </p>
+      </div>
+
+      <div class="prod-grid">
+        <div class="prod-card wa" style="position:relative;">
+          <div class="prod-card-badge soon"><div class="prod-card-badge-dot"></div>Q3 2025</div>
+          <h3 class="prod-card-name">KoBa Hire</h3>
+          <p class="prod-card-tagline">Automatización del proceso de reclutamiento y onboarding. Desde el primer contacto hasta el primer día de trabajo.</p>
+          <ul class="prod-card-features">
+            <li><span class="pf-dash">—</span>Pipeline de candidatos automatizado</li>
+            <li><span class="pf-dash">—</span>Evaluaciones técnicas integradas</li>
+            <li><span class="pf-dash">—</span>Onboarding digital estructurado</li>
+          </ul>
+          <div class="prod-card-soon-overlay"><span class="soon-label">Próximamente</span></div>
+        </div>
+        <div class="prod-card wa" style="position:relative;transition-delay:100ms">
+          <div class="prod-card-badge soon"><div class="prod-card-badge-dot"></div>Q4 2025</div>
+          <h3 class="prod-card-name">KoBa Pay</h3>
+          <p class="prod-card-tagline">Gestión de cobranzas y pagos recurrentes B2B. Conciliación automática, alertas de vencimiento y reportes de tesorería.</p>
+          <ul class="prod-card-features">
+            <li><span class="pf-dash">—</span>Cobranzas automáticas</li>
+            <li><span class="pf-dash">—</span>Conciliación bancaria automática</li>
+            <li><span class="pf-dash">—</span>Reportes de flujo de caja</li>
+          </ul>
+          <div class="prod-card-soon-overlay"><span class="soon-label">Próximamente</span></div>
+        </div>
+        <div class="prod-card wa" style="position:relative;transition-delay:200ms">
+          <div class="prod-card-badge soon"><div class="prod-card-badge-dot"></div>2026</div>
+          <h3 class="prod-card-name">KoBa Intel</h3>
+          <p class="prod-card-tagline">Inteligencia artificial aplicada a tu operación. Predicciones, anomalías, recomendaciones — basadas en tus propios datos.</p>
+          <ul class="prod-card-features">
+            <li><span class="pf-dash">—</span>Modelos entrenados con tus datos</li>
+            <li><span class="pf-dash">—</span>Detección de anomalías en tiempo real</li>
+            <li><span class="pf-dash">—</span>Asistente operacional con IA</li>
+          </ul>
+          <div class="prod-card-soon-overlay"><span class="soon-label">Próximamente</span></div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- CRYSTAL SECTION — preview del sistema visual futuro -->
+  <div class="crystal-section">
+    <div class="crystal-orb crystal-orb-1"></div>
+    <div class="crystal-orb crystal-orb-2"></div>
+    <div class="crystal-orb crystal-orb-3"></div>
+
+    <div class="crystal-section-inner">
+      <p class="crystal-eyebrow wa">KBA · Visión</p>
+      <h2 class="crystal-headline wa" style="transition-delay:80ms">
+        <span class="iris">Software</span><br/>
+        <span class="plain">del futuro,</span><br/>
+        <span class="iris">hoy.</span>
+      </h2>
+      <p class="crystal-sub wa" style="transition-delay:160ms">
+        Cada producto KoBa está diseñado para durar. Arquitectura limpia, interfaces que no envejecen y tecnología que evoluciona con tu operación.
+      </p>
+
+      <div class="crystal-cards">
+        <div class="crystal-card wa" style="transition-delay:200ms">
+          <div class="crystal-card-inner">
+            <span class="crystal-card-label">KBA-S · Stack</span>
+            <h3 class="crystal-card-name">Arquitectura limpia</h3>
+            <p class="crystal-card-desc">Código modular, documentado y sin deuda técnica. Tu equipo lo puede mantener y escalar sin depender de nosotros.</p>
+            <span class="crystal-card-tag">Base sólida para escalar</span>
+          </div>
+        </div>
+        <div class="crystal-card wa" style="transition-delay:300ms">
+          <div class="crystal-card-inner">
+            <span class="crystal-card-label">KBA-D · Design</span>
+            <h3 class="crystal-card-name">Interfaz que perdura</h3>
+            <p class="crystal-card-desc">Sistemas de diseño construidos para durar. No seguimos tendencias — construimos lenguajes visuales que envejecen bien.</p>
+            <span class="crystal-card-tag">Design system propio</span>
+          </div>
+        </div>
+        <div class="crystal-card wa" style="transition-delay:400ms">
+          <div class="crystal-card-inner">
+            <span class="crystal-card-label">KBA-I · Intelligence</span>
+            <h3 class="crystal-card-name">Datos que trabajan</h3>
+            <p class="crystal-card-desc">Cada producto captura los datos correctos desde el día uno. Cuando llegue el momento de aplicar IA, la base ya estará lista.</p>
+            <span class="crystal-card-tag">Preparado para IA</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TICKER -->
+  <div class="ticker-bar">
+    <div class="tk-row tk-row-1">
+      <div class="tk-track">
+        <span class="tk-item">KoBa Ops</span><span class="tk-sep">·</span>
+        <span class="tk-item">KoBa Flow</span><span class="tk-sep">·</span>
+        <span class="tk-item">KoBa Pulse</span><span class="tk-sep">·</span>
+        <span class="tk-item">KoBa Hire</span><span class="tk-sep">·</span>
+        <span class="tk-item">KoBa Pay</span><span class="tk-sep">·</span>
+        <span class="tk-item">KoBa Intel</span><span class="tk-sep">·</span>
+        <span class="tk-item">KoBa Ops</span><span class="tk-sep">·</span>
+        <span class="tk-item">KoBa Flow</span><span class="tk-sep">·</span>
+        <span class="tk-item">KoBa Pulse</span><span class="tk-sep">·</span>
+        <span class="tk-item">KoBa Hire</span><span class="tk-sep">·</span>
+        <span class="tk-item">KoBa Pay</span><span class="tk-sep">·</span>
+        <span class="tk-item">KoBa Intel</span><span class="tk-sep">·</span>
+      </div>
+    </div>
+    <div class="tk-row tk-row-2" style="margin-top:6px">
+      <div class="tk-track-r">
+        <span class="tk-item">SaaS B2B</span><span class="tk-sep">·</span>
+        <span class="tk-item">Automatización</span><span class="tk-sep">·</span>
+        <span class="tk-item">A medida</span><span class="tk-sep">·</span>
+        <span class="tk-item">Tu operación</span><span class="tk-sep">·</span>
+        <span class="tk-item">SaaS B2B</span><span class="tk-sep">·</span>
+        <span class="tk-item">Automatización</span><span class="tk-sep">·</span>
+        <span class="tk-item">A medida</span><span class="tk-sep">·</span>
+        <span class="tk-item">Tu operación</span><span class="tk-sep">·</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- CTA -->
+  <div class="prod-cta">
+    <p class="wa" style="font-size:11px;text-transform:uppercase;letter-spacing:0.18em;background:linear-gradient(90deg,#7B6FE8,#E8507A);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:24px;">¿Cuál es el tuyo?</p>
+    <h2 class="wa" style="transition-delay:100ms;font-size:clamp(40px,5vw,72px);font-weight:600;letter-spacing:-0.04em;line-height:0.95;margin-bottom:48px;max-width:600px;margin-left:auto;margin-right:auto;">
+      <span style="background:var(--grad-iris);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;background-size:200%;animation:irisShift 5s ease infinite;">El software correcto</span><br/>
+      <span style="color:rgba(248,246,242,0.25)">cambia todo.</span>
+    </h2>
+    <div class="wa" style="transition-delay:200ms;display:flex;gap:16px;justify-content:center;flex-wrap:wrap;">
+      <a href="Contacto.html" class="btn-gold">Hablar con el equipo</a>
+      <a href="Proceso.html" style="font-size:13px;color:rgba(248,246,242,0.35);align-self:center;transition:color 200ms;" onmouseenter="this.style.color='rgba(248,246,242,0.7)'" onmouseleave="this.style.color='rgba(248,246,242,0.35)'">Ver nuestro proceso →</a>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer id="footer">
+    <div class="footer-grid">
+      <div class="footer-top">
+        <a href="KoBa Studio v2.html" class="f-logo">KoBa Studio</a>
+        <ul class="f-nav">
+          <li><a href="Servicios.html">Servicios</a></li>
+          <li><a href="Proceso.html">Proceso</a></li>
+          <li><a href="Productos.html">Productos</a></li>
+          <li><a href="Contacto.html">Contacto</a></li>
+        </ul>
+        <div class="f-socials">
+          <a href="#" class="f-social"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg></a>
+          <a href="#" class="f-social"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"/></svg></a>
+          <a href="#" class="f-social"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="0.5" fill="currentColor"/></svg></a>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p class="f-copy">© 2025 KoBa Studio</p>
+        <p class="f-copy">Soluciones SaaS B2B · Automatización</p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    const dot=document.getElementById('cur-dot'),ring=document.getElementById('cur-ring');
+    let mx=innerWidth/2,my=innerHeight/2,dx=mx,dy=my,rx=mx,ry=my;
+    document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;});
+    function lerp(a,b,t){return a+(b-a)*t;}
+    (function loop(){dx=lerp(dx,mx,0.15);dy=lerp(dy,my,0.15);rx=lerp(rx,mx,0.07);ry=lerp(ry,my,0.07);dot.style.left=dx+'px';dot.style.top=dy+'px';ring.style.left=rx+'px';ring.style.top=ry+'px';requestAnimationFrame(loop);})();
+    document.querySelectorAll('a,button').forEach(el=>{el.addEventListener('mouseenter',()=>document.body.classList.add('ch'));el.addEventListener('mouseleave',()=>document.body.classList.remove('ch'));});
+    document.addEventListener('mousedown',()=>{document.body.classList.add('cc');setTimeout(()=>document.body.classList.remove('cc'),180);});
+
+    /* NAVBAR */
+    const nav=document.getElementById('nav');
+    window.addEventListener('scroll',()=>nav.classList.toggle('scrolled',scrollY>80),{passive:true});
+    function navIn(){setTimeout(()=>document.getElementById('nl').classList.add('in'),100);['nl1','nl2','nl3','nl4'].forEach((id,i)=>setTimeout(()=>document.getElementById(id).classList.add('in'),250+i*100));setTimeout(()=>document.getElementById('btn-login').classList.add('in'),650);}
+    document.readyState==='complete'?navIn():window.addEventListener('load',navIn);
+
+    /* HERO */
+    document.querySelectorAll('.prod-hero-hl .word-inner').forEach((w,i)=>{setTimeout(()=>w.classList.add('in'),300+i*90);});
+    setTimeout(()=>document.getElementById('phs').classList.add('in'),200);
+    /* Orbes hero */
+    setTimeout(()=>document.getElementById('prod-hero').classList.add('orbs-in'),200);
+
+    /* TABS (smooth scroll) */
+    document.querySelectorAll('.prod-tab').forEach(tab=>{
+      tab.addEventListener('click',e=>{
+        e.preventDefault();
+        document.querySelectorAll('.prod-tab').forEach(t=>t.classList.remove('active'));
+        tab.classList.add('active');
+        const target=document.querySelector(tab.getAttribute('href'));
+        if(target) window.scrollTo({top:target.offsetTop-120,behavior:'smooth'});
+      });
+    });
+
+    /* Active tab on scroll */
+    const sections=['saas','custom','futuro'].map(id=>document.getElementById(id));
+    window.addEventListener('scroll',()=>{
+      const mid=scrollY+innerHeight*0.4;
+      sections.forEach((s,i)=>{
+        if(s&&s.offsetTop<=mid){
+          document.querySelectorAll('.prod-tab').forEach((t,j)=>t.classList.toggle('active',j===i));
+        }
+      });
+    },{passive:true});
+
+    /* INTERSECTION OBSERVER */
+    const io=new IntersectionObserver(entries=>{
+      entries.forEach(e=>{
+        if(!e.isIntersecting)return;
+        const d=parseInt(e.target.style.transitionDelay)||0;
+        setTimeout(()=>e.target.classList.add('in'),d);
+        io.unobserve(e.target);
+      });
+    },{threshold:0.12});
+    document.querySelectorAll('.wa').forEach(el=>io.observe(el));
+  </script>
+
+  <!-- MODAL AUTH -->
+  <div id="modal-auth" class="modal-overlay">
+    <div class="modal-box">
+      <button id="modal-close" class="modal-close-btn">&times;</button>
+      <div class="modal-tabs">
+        <button id="tab-login" class="modal-tab active">Entrar</button>
+        <button id="tab-signup" class="modal-tab">Registrarse</button>
+      </div>
+
+      <form id="form-login" style="display:flex; flex-direction:column; gap:12px">
+        <input id="login-email" type="email" placeholder="Email" required />
+        <input id="login-password" type="password" placeholder="Contraseña" required />
+        <p id="error-login" class="form-error"></p>
+        <button type="submit" class="btn-modal-submit">Entrar</button>
+        <div style="position:relative; text-align:center; margin:8px 0">
+          <span style="background:#FFFFFF; padding:0 8px; position:relative; z-index:1; color:#A8A49F; font-size:12px">o</span>
+          <div style="position:absolute; top:50%; left:0; right:0; height:1px; background:#E8E4DF; z-index:0"></div>
+        </div>
+        <button type="button" id="btn-google" style="display:flex; align-items:center; justify-content:center; gap:8px; background:#FFFFFF; color:#0D0D0D; border:1px solid #E8E4DF; padding:12px 16px; border-radius:8px; font-size:14px; font-weight:500; cursor:pointer; transition:border-color 200ms, background 200ms">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v12M6 12h12"/></svg>
+          Continuar con Google
+        </button>
+      </form>
+
+      <form id="form-signup" style="display:none; flex-direction:column; gap:12px">
+        <input id="signup-email" type="email" placeholder="Email" required />
+        <input id="signup-password" type="password" placeholder="Contraseña (mínimo 6 caracteres)" required />
+        <p id="error-signup" class="form-error"></p>
+        <button type="submit" class="btn-modal-submit">Crear cuenta</button>
+        <div style="position:relative; text-align:center; margin:8px 0">
+          <span style="background:#FFFFFF; padding:0 8px; position:relative; z-index:1; color:#A8A49F; font-size:12px">o</span>
+          <div style="position:absolute; top:50%; left:0; right:0; height:1px; background:#E8E4DF; z-index:0"></div>
+        </div>
+        <button type="button" id="btn-google" style="display:flex; align-items:center; justify-content:center; gap:8px; background:#FFFFFF; color:#0D0D0D; border:1px solid #E8E4DF; padding:12px 16px; border-radius:8px; font-size:14px; font-weight:500; cursor:pointer; transition:border-color 200ms, background 200ms">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v12M6 12h12"/></svg>
+          Continuar con Google
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <script type="module" src="/assets/js/main.js"></script>
+</body>
+</html>

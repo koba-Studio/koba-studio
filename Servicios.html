@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Servicios — KoBa Studio</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="shared.css" />
+  <style>
+    /* ── SERVICIOS PAGE ── */
+    .services-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1px;
+      background: #E8E4DF;
+      border: 1px solid #E8E4DF;
+      margin: 0 48px 120px;
+    }
+    .service-card {
+      background: #FFFFFF;
+      padding: 56px 48px;
+      position: relative;
+      overflow: hidden;
+      transition: background 300ms;
+    }
+    .service-card:hover { background: #F8F6F2; }
+    .service-card-num {
+      font-size: 11px; text-transform: uppercase; letter-spacing: 0.18em;
+      color: #A8A49F; margin-bottom: 40px; display: flex; align-items: center; gap: 12px;
+    }
+    .service-card-num-dot {
+      width: 5px; height: 5px; border-radius: 50%; background: linear-gradient(135deg, #7B6FE8, #E8507A);
+    }
+    .service-icon {
+      width: 32px; height: 32px; background: linear-gradient(135deg, #7B6FE8, #E8507A); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin-bottom: 24px;
+    }
+    .service-title {
+      font-size: 36px; font-weight: 600; letter-spacing: -0.025em;
+      line-height: 1; color: #0D0D0D; margin-bottom: 20px;
+    }
+    .service-desc {
+      font-size: 15px; color: #6B6866; line-height: 1.7;
+      margin-bottom: 32px; max-width: 380px;
+    }
+    .service-list { list-style: none; }
+    .service-list li {
+      font-size: 14px; color: #2C2A27; padding: 10px 0;
+      border-top: 1px solid #F0EDE8; display: flex; align-items: baseline; gap: 10px;
+    }
+    .service-list li:last-child { border-bottom: 1px solid #F0EDE8; }
+    .s-dash { background: linear-gradient(90deg, #7B6FE8, #E8507A); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; flex-shrink: 0; }
+    .service-tag {
+      display: inline-block; margin-top: 28px;
+      font-size: 11px; font-weight: 500; text-transform: uppercase;
+      letter-spacing: 0.15em; color: #A8A49F;
+    }
+    /* Large feature card (spans 2 cols) */
+    .service-card.wide {
+      grid-column: span 2;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 64px;
+      align-items: start;
+    }
+    .service-card.wide .service-desc { max-width: 440px; }
+
+    /* Comparison table */
+    .compare-section {
+      padding: 0 48px 120px;
+    }
+    .compare-eyebrow {
+      font-size: 11px; text-transform: uppercase; letter-spacing: 0.18em;
+      color: #A8A49F; margin-bottom: 48px;
+    }
+    .compare-table { width: 100%; border-collapse: collapse; }
+    .compare-table th {
+      text-align: left; font-size: 13px; font-weight: 500; color: #0D0D0D;
+      padding: 16px 0; border-bottom: 2px solid #0D0D0D;
+    }
+    .compare-table th:first-child { width: 40%; }
+    .compare-table th.gold { background: linear-gradient(135deg, #7B6FE8, #E8507A); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .compare-table td {
+      font-size: 14px; color: #6B6866; padding: 16px 0;
+      border-bottom: 1px solid #F0EDE8; vertical-align: middle;
+    }
+    .compare-table td:first-child { color: #2C2A27; font-weight: 400; }
+    .check { background: linear-gradient(135deg, #7B6FE8, #E8507A); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; font-size: 16px; }
+    .cross { color: #E8E4DF; }
+
+    @media (max-width: 900px) {
+      .services-grid { grid-template-columns: 1fr; margin: 0 24px 80px; }
+      .service-card.wide { grid-column: span 1; grid-template-columns: 1fr; gap: 32px; }
+      .compare-section { padding: 0 24px 80px; }
+    }
+  </style>
+</head>
+<body>
+
+  <div id="cur-dot"></div>
+  <div id="cur-ring"></div>
+
+  <nav id="nav">
+    <div class="nav-inner">
+      <a href="KoBa Studio v2.html" class="nav-logo" id="nl">KoBa Studio</a>
+      <ul class="nav-links">
+        <li><a href="Servicios.html" id="nl1" class="active">Servicios</a></li>
+        <li><a href="Proceso.html" id="nl2">Proceso</a></li>
+        <li><a href="Productos.html" id="nl3">Productos</a></li>
+        <li><a href="Contacto.html" id="nl4">Contacto</a></li>
+      </ul>
+      <button id="btn-login" class="nav-btn">Iniciar sesión</button>
+      <a href="dashboard.html" id="btn-profile" class="nav-btn" style="display:none">Mi perfil</a>
+      <button id="btn-logout" class="nav-btn" style="display:none">Cerrar sesión</button>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <header class="page-hero">
+    <p class="page-hero-eyebrow wa">KBA · Servicios</p>
+    <h1 class="page-hero-headline" id="ph">
+      <span class="word"><span class="word-inner">Software</span></span>
+      <span class="word"><span class="word-inner" style="transition-delay:80ms">que</span></span>
+      <span class="word"><span class="word-inner" style="transition-delay:160ms">trabaja</span></span>
+      <br style="line-height:1">
+      <span class="word"><span class="word-inner" style="transition-delay:240ms; background: linear-gradient(135deg, #7B6FE8, #E8507A); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">para</span></span>
+      <span class="word"><span class="word-inner" style="transition-delay:320ms">ti.</span></span>
+    </h1>
+    <p class="page-hero-sub" id="phs">
+      Tres áreas de especialización. Un único objetivo: que tu operación funcione mejor mañana que hoy.
+    </p>
+  </header>
+
+  <div class="marquee-bar">
+    <div class="mq-track">
+      <span class="mq-item">Diagnóstico</span><span class="mq-dot">◆</span>
+      <span class="mq-item">Automatización</span><span class="mq-dot">◆</span>
+      <span class="mq-item">Integraciones</span><span class="mq-dot">◆</span>
+      <span class="mq-item">SaaS a medida</span><span class="mq-dot">◆</span>
+      <span class="mq-item">Flujos sin fricción</span><span class="mq-dot">◆</span>
+      <span class="mq-item">Diagnóstico</span><span class="mq-dot">◆</span>
+      <span class="mq-item">Automatización</span><span class="mq-dot">◆</span>
+      <span class="mq-item">Integraciones</span><span class="mq-dot">◆</span>
+      <span class="mq-item">SaaS a medida</span><span class="mq-dot">◆</span>
+      <span class="mq-item">Flujos sin fricción</span><span class="mq-dot">◆</span>
+    </div>
+  </div>
+
+  <!-- SERVICES GRID -->
+  <div style="padding-top:80px;">
+    <div class="services-grid">
+
+      <!-- Card 1 -->
+      <div class="service-card wa">
+        <div class="service-card-num"><div class="service-card-num-dot"></div>KBA-001 · Strategy</div>
+        <svg class="service-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <h3 class="service-title">Diagnóstico<br/>& Estrategia</h3>
+        <p class="service-desc">Analizamos tu operación actual, identificamos <strong style="background: linear-gradient(135deg, #7B6FE8, #E8507A); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">fricciones costosas</strong> y diseñamos un roadmap de automatización realista.</p>
+        <ul class="service-list">
+          <li><span class="s-dash">—</span>Workshop de descubrimiento</li>
+          <li><span class="s-dash">—</span>Mapeo de procesos</li>
+          <li><span class="s-dash">—</span>Análisis de herramientas existentes</li>
+          <li><span class="s-dash">—</span>Roadmap priorizado</li>
+        </ul>
+        <span class="service-tag">Sin costo inicial</span>
+      </div>
+
+      <!-- Card 2 -->
+      <div class="service-card wa" style="transition-delay:100ms">
+        <div class="service-card-num"><div class="service-card-num-dot"></div>KBA-002 · Design</div>
+        <svg class="service-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="8" height="8" rx="1"/><rect x="14" y="3" width="8" height="8" rx="1"/><rect x="2" y="13" width="8" height="8" rx="1"/><rect x="14" y="13" width="8" height="8" rx="1"/></svg>
+        <h3 class="service-title">Diseño de<br/>Producto</h3>
+        <p class="service-desc">Arquitectura de información, flujos de usuario y <strong style="background: linear-gradient(135deg, #7B6FE8, #E8507A); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">sistema de diseño</strong> para tu software. Orientado a la eficiencia operacional.</p>
+        <ul class="service-list">
+          <li><span class="s-dash">—</span>UX / UI a medida</li>
+          <li><span class="s-dash">—</span>Sistema de diseño propio</li>
+          <li><span class="s-dash">—</span>Prototipo interactivo</li>
+          <li><span class="s-dash">—</span>Revisiones ilimitadas</li>
+        </ul>
+        <span class="service-tag">2 semanas</span>
+      </div>
+
+      <!-- Card wide -->
+      <div class="service-card wide wa" style="transition-delay:200ms">
+        <div>
+          <div class="service-card-num"><div class="service-card-num-dot"></div>KBA-003 · Build & Run</div>
+          <svg class="service-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+          <h3 class="service-title">Desarrollo<br/>& Entrega</h3>
+          <p class="service-desc">Construcción del software con sprints de dos semanas, <strong style="background: linear-gradient(135deg, #7B6FE8, #E8507A); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">integraciones con tu stack</strong> actual y soporte post-lanzamiento. El proyecto más complejo hecho simple.</p>
+          <span class="service-tag">El servicio principal</span>
+        </div>
+        <ul class="service-list">
+          <li><span class="s-dash">—</span>Desarrollo ágil por sprints</li>
+          <li><span class="s-dash">—</span>Integraciones con APIs y sistemas existentes</li>
+          <li><span class="s-dash">—</span>Testing exhaustivo antes de cada entrega</li>
+          <li><span class="s-dash">—</span>Código documentado sin deuda técnica</li>
+          <li><span class="s-dash">—</span>Despliegue en tu infraestructura</li>
+          <li><span class="s-dash">—</span>Soporte 30 días post-lanzamiento</li>
+          <li><span class="s-dash">—</span>Capacitación del equipo incluida</li>
+        </ul>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- COMPARE TABLE -->
+  <div class="compare-section">
+    <p class="compare-eyebrow wa">KoBa vs. Software genérico</p>
+    <table class="compare-table wa" style="transition-delay:100ms">
+      <thead>
+        <tr>
+          <th>Característica</th>
+          <th class="gold">KoBa Studio</th>
+          <th>Software genérico</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>Adaptado a tu operación</td><td><span class="check">✓</span></td><td><span class="cross">✗</span></td></tr>
+        <tr><td>Sin funciones que no usarás</td><td><span class="check">✓</span></td><td><span class="cross">✗</span></td></tr>
+        <tr><td>Integraciones con tu stack</td><td><span class="check">✓</span></td><td>Parcial</td></tr>
+        <tr><td>Precio predecible</td><td><span class="check">✓</span></td><td>Varía</td></tr>
+        <tr><td>Soporte directo con el equipo</td><td><span class="check">✓</span></td><td><span class="cross">✗</span></td></tr>
+        <tr><td>Código propiedad tuya</td><td><span class="check">✓</span></td><td><span class="cross">✗</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- TICKER -->
+  <div class="ticker-bar">
+    <div class="tk-row tk-row-1">
+      <div class="tk-track">
+        <span class="tk-item">SaaS personalizado</span><span class="tk-sep">·</span>
+        <span class="tk-item">Automatización real</span><span class="tk-sep">·</span>
+        <span class="tk-item">KoBa Studio</span><span class="tk-sep">·</span>
+        <span class="tk-item">Sin software genérico</span><span class="tk-sep">·</span>
+        <span class="tk-item">Control total</span><span class="tk-sep">·</span>
+        <span class="tk-item">SaaS personalizado</span><span class="tk-sep">·</span>
+        <span class="tk-item">Automatización real</span><span class="tk-sep">·</span>
+        <span class="tk-item">KoBa Studio</span><span class="tk-sep">·</span>
+        <span class="tk-item">Sin software genérico</span><span class="tk-sep">·</span>
+        <span class="tk-item">Control total</span><span class="tk-sep">·</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- CTA -->
+  <div style="background:#0D0D0D;padding:120px 48px;text-align:center;">
+    <p class="wa" style="font-size:11px;text-transform:uppercase;letter-spacing:0.18em;background:linear-gradient(90deg,#7B6FE8,#E8507A);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:24px;">¿Cuál necesitás?</p>
+    <h2 class="wa" style="transition-delay:100ms;font-size:clamp(40px,5vw,72px);font-weight:600;color:#F8F6F2;letter-spacing:-0.03em;margin-bottom:48px;max-width:600px;margin-left:auto;margin-right:auto;line-height:1.05;">
+      Empezamos con<br/><span style="color:rgba(248,246,242,0.3)">una conversación.</span>
+    </h2>
+    <div class="wa" style="transition-delay:200ms;display:flex;gap:16px;justify-content:center;flex-wrap:wrap;">
+      <a href="Contacto.html" class="btn-gold">Agendar diagnóstico</a>
+      <a href="Precios.html" style="font-size:13px;font-weight:400;color:rgba(248,246,242,0.4);align-self:center;transition:color 200ms;" onmouseenter="this.style.color='rgba(248,246,242,0.8)'" onmouseleave="this.style.color='rgba(248,246,242,0.4)'">Ver precios →</a>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer id="footer">
+    <div class="footer-grid">
+      <div class="footer-top">
+        <a href="KoBa Studio v2.html" class="f-logo">KoBa Studio</a>
+        <ul class="f-nav">
+          <li><a href="Servicios.html">Servicios</a></li>
+          <li><a href="Proceso.html">Proceso</a></li>
+          <li><a href="Productos.html">Productos</a></li>
+          <li><a href="Contacto.html">Contacto</a></li>
+        </ul>
+        <div class="f-socials">
+          <a href="#" class="f-social"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg></a>
+          <a href="#" class="f-social"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"/></svg></a>
+          <a href="#" class="f-social"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="0.5" fill="currentColor"/></svg></a>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p class="f-copy">© 2025 KoBa Studio</p>
+        <p class="f-copy">Soluciones SaaS B2B · Automatización</p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    const dot=document.getElementById('cur-dot'),ring=document.getElementById('cur-ring');
+    let mx=innerWidth/2,my=innerHeight/2,dx=mx,dy=my,rx=mx,ry=my;
+    document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;});
+    function lerp(a,b,t){return a+(b-a)*t;}
+    (function loop(){dx=lerp(dx,mx,0.15);dy=lerp(dy,my,0.15);rx=lerp(rx,mx,0.07);ry=lerp(ry,my,0.07);dot.style.left=dx+'px';dot.style.top=dy+'px';ring.style.left=rx+'px';ring.style.top=ry+'px';requestAnimationFrame(loop);})();
+    document.querySelectorAll('a,button').forEach(el=>{el.addEventListener('mouseenter',()=>document.body.classList.add('ch'));el.addEventListener('mouseleave',()=>document.body.classList.remove('ch'));});
+    document.addEventListener('mousedown',()=>{document.body.classList.add('cc');setTimeout(()=>document.body.classList.remove('cc'),180);});
+    const nav=document.getElementById('nav');
+    window.addEventListener('scroll',()=>nav.classList.toggle('scrolled',scrollY>80),{passive:true});
+    function navIn(){setTimeout(()=>document.getElementById('nl').classList.add('in'),100);['nl1','nl2','nl3','nl4'].forEach((id,i)=>setTimeout(()=>document.getElementById(id).classList.add('in'),250+i*100));setTimeout(()=>document.getElementById('btn-login').classList.add('in'),650);}
+    document.readyState==='complete'?navIn():window.addEventListener('load',navIn);
+    document.querySelectorAll('.page-hero-headline .word-inner').forEach((w,i)=>{setTimeout(()=>w.classList.add('in'),300+i*90);});
+    setTimeout(()=>document.getElementById('phs').classList.add('in'),200);
+    const io=new IntersectionObserver(entries=>{entries.forEach(e=>{if(!e.isIntersecting)return;const d=parseInt(e.target.style.transitionDelay)||0;setTimeout(()=>e.target.classList.add('in'),d);io.unobserve(e.target);});},{threshold:0.12});
+    document.querySelectorAll('.wa').forEach(el=>io.observe(el));
+  </script>
+
+  <!-- MODAL AUTH -->
+  <div id="modal-auth" class="modal-overlay">
+    <div class="modal-box">
+      <button id="modal-close" class="modal-close-btn">&times;</button>
+      <div class="modal-tabs">
+        <button id="tab-login" class="modal-tab active">Entrar</button>
+        <button id="tab-signup" class="modal-tab">Registrarse</button>
+      </div>
+
+      <form id="form-login" style="display:flex; flex-direction:column; gap:12px">
+        <input id="login-email" type="email" placeholder="Email" required />
+        <input id="login-password" type="password" placeholder="Contraseña" required />
+        <p id="error-login" class="form-error"></p>
+        <button type="submit" class="btn-modal-submit">Entrar</button>
+        <div style="position:relative; text-align:center; margin:8px 0">
+          <span style="background:#FFFFFF; padding:0 8px; position:relative; z-index:1; color:#A8A49F; font-size:12px">o</span>
+          <div style="position:absolute; top:50%; left:0; right:0; height:1px; background:#E8E4DF; z-index:0"></div>
+        </div>
+        <button type="button" id="btn-google" style="display:flex; align-items:center; justify-content:center; gap:8px; background:#FFFFFF; color:#0D0D0D; border:1px solid #E8E4DF; padding:12px 16px; border-radius:8px; font-size:14px; font-weight:500; cursor:pointer; transition:border-color 200ms, background 200ms">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v12M6 12h12"/></svg>
+          Continuar con Google
+        </button>
+      </form>
+
+      <form id="form-signup" style="display:none; flex-direction:column; gap:12px">
+        <input id="signup-email" type="email" placeholder="Email" required />
+        <input id="signup-password" type="password" placeholder="Contraseña (mínimo 6 caracteres)" required />
+        <p id="error-signup" class="form-error"></p>
+        <button type="submit" class="btn-modal-submit">Crear cuenta</button>
+        <div style="position:relative; text-align:center; margin:8px 0">
+          <span style="background:#FFFFFF; padding:0 8px; position:relative; z-index:1; color:#A8A49F; font-size:12px">o</span>
+          <div style="position:absolute; top:50%; left:0; right:0; height:1px; background:#E8E4DF; z-index:0"></div>
+        </div>
+        <button type="button" id="btn-google" style="display:flex; align-items:center; justify-content:center; gap:8px; background:#FFFFFF; color:#0D0D0D; border:1px solid #E8E4DF; padding:12px 16px; border-radius:8px; font-size:14px; font-weight:500; cursor:pointer; transition:border-color 200ms, background 200ms">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v12M6 12h12"/></svg>
+          Continuar con Google
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <script type="module" src="/assets/js/main.js"></script>
+</body>
+</html>
