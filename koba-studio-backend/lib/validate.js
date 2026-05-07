@@ -1,4 +1,19 @@
-import { isEmail, escape } from 'validator'
+import validator from 'validator'
+
+const { isEmail } = validator
+
+// Función simple para escapar HTML
+function escapeHtml(text) {
+  if (typeof text !== 'string') return ''
+  const map = {
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#039;'
+  }
+  return text.replace(/[&<>"']/g, m => map[m])
+}
 
 /**
  * Validar y sanitizar datos del formulario de contacto
@@ -55,11 +70,11 @@ export function validateContactForm(data) {
   return {
     valid: true,
     data: {
-      nombre: escape(data.nombre.trim()),
-      email: escape(data.email.trim()),
-      mensaje: escape(data.mensaje.trim()),
+      nombre: escapeHtml(data.nombre.trim()),
+      email: escapeHtml(data.email.trim()),
+      mensaje: escapeHtml(data.mensaje.trim()),
       servicio: data.servicio || null,
-      empresa: data.empresa ? escape(data.empresa.trim()) : null,
+      empresa: data.empresa ? escapeHtml(data.empresa.trim()) : null,
       urgencia: Array.isArray(data.urgencia) ? data.urgencia.filter(u => urgenciasValidas.includes(u)) : []
     }
   }
@@ -70,7 +85,7 @@ export function validateContactForm(data) {
  */
 export function sanitizeString(str) {
   if (typeof str !== 'string') return ''
-  return escape(str.trim())
+  return escapeHtml(str.trim())
 }
 
 /**
