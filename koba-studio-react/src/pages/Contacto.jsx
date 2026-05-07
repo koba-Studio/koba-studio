@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useAuth } from '../hooks/useAuth'
+import { supabase } from '../lib/supabase'
 
 export function Contacto() {
   const { user, openModal } = useAuth()
@@ -46,9 +47,20 @@ export function Contacto() {
 
     try {
       const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3001'
+
+      // Preparar headers con autenticación si el usuario está autenticado
+      const headers = { 'Content-Type': 'application/json' }
+
+      if (user) {
+        const { data: { session } } = await supabase.auth.getSession()
+        if (session?.access_token) {
+          headers['Authorization'] = `Bearer ${session.access_token}`
+        }
+      }
+
       const res = await fetch(`${apiUrl}/api/contact`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers,
         body: JSON.stringify({
           nombre:  form.nombre.value,
           empresa: form.empresa.value,
@@ -61,7 +73,7 @@ export function Contacto() {
 
       if (!res.ok) {
         const data = await res.json().catch(() => ({}))
-        throw new Error(data.error || 'Error del servidor')
+        throw new Error(data.error || data.message || 'Error del servidor')
       }
 
       setSubmitted(true)
