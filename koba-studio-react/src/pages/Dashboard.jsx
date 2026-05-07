@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Link, Navigate, useLocation } from 'react-router-dom'
 import { useAuth } from '../hooks/useAuth'
 import { supabase } from '../lib/supabase'
@@ -15,34 +15,8 @@ export function Dashboard() {
   const [purchases, setPurchases] = useState([])
   const [purchasesLoading, setPurchasesLoading] = useState(true)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
-  const curDotRef = useRef(null)
-  const curRingRef = useRef(null)
   const location = useLocation()
   const statusParam = new URLSearchParams(location.search).get('status')
-
-  // Lerp cursor
-  useEffect(() => {
-    const dot = curDotRef.current
-    const ring = curRingRef.current
-    let mx = window.innerWidth / 2, my = window.innerHeight / 2
-    let dx = mx, dy = my, rx = mx, ry = my, rafId
-    const lerp = (a, b, t) => a + (b - a) * t
-    const loop = () => {
-      dx = lerp(dx, mx, 0.15); dy = lerp(dy, my, 0.15)
-      rx = lerp(rx, mx, 0.07); ry = lerp(ry, my, 0.07)
-      if (dot)  { dot.style.left  = dx + 'px'; dot.style.top  = dy + 'px' }
-      if (ring) { ring.style.left = rx + 'px'; ring.style.top = ry + 'px' }
-      rafId = requestAnimationFrame(loop)
-    }
-    rafId = requestAnimationFrame(loop)
-    const onMove = e => { mx = e.clientX; my = e.clientY }
-    document.addEventListener('mousemove', onMove)
-    document.querySelectorAll('a, button').forEach(el => {
-      el.addEventListener('mouseenter', () => document.body.classList.add('ch'))
-      el.addEventListener('mouseleave', () => document.body.classList.remove('ch'))
-    })
-    return () => { cancelAnimationFrame(rafId); document.removeEventListener('mousemove', onMove) }
-  }, [])
 
   // Nav scroll
   useEffect(() => {
@@ -83,9 +57,6 @@ export function Dashboard() {
 
   return (
     <>
-      <div id="cur-dot"  ref={curDotRef}></div>
-      <div id="cur-ring" ref={curRingRef}></div>
-
       {/* Navbar */}
       <nav id="nav" className="scrolled">
         <div className="nav-inner">

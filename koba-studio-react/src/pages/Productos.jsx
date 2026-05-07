@@ -1,10 +1,8 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useAuth } from '../hooks/useAuth'
 
 function usePageSetup(activeTab) {
-  const curDotRef = useRef(null)
-  const curRingRef = useRef(null)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
   useEffect(() => {
@@ -33,40 +31,13 @@ function usePageSetup(activeTab) {
     return () => { window.removeEventListener('scroll', handleScroll); io.disconnect() }
   }, [])
 
-  useEffect(() => {
-    const dot = curDotRef.current
-    const ring = curRingRef.current
-    let mx = window.innerWidth / 2, my = window.innerHeight / 2
-    let dx = mx, dy = my, rx = mx, ry = my, rafId
-    const lerp = (a, b, t) => a + (b - a) * t
-    const loop = () => {
-      dx = lerp(dx, mx, 0.15); dy = lerp(dy, my, 0.15)
-      rx = lerp(rx, mx, 0.07); ry = lerp(ry, my, 0.07)
-      if (dot) { dot.style.left = dx + 'px'; dot.style.top = dy + 'px' }
-      if (ring) { ring.style.left = rx + 'px'; ring.style.top = ry + 'px' }
-      rafId = requestAnimationFrame(loop)
-    }
-    rafId = requestAnimationFrame(loop)
-    const onMove = e => { mx = e.clientX; my = e.clientY }
-    document.addEventListener('mousemove', onMove)
-    document.querySelectorAll('a, button').forEach(el => {
-      el.addEventListener('mouseenter', () => document.body.classList.add('ch'))
-      el.addEventListener('mouseleave', () => document.body.classList.remove('ch'))
-    })
-    document.addEventListener('mousedown', () => {
-      document.body.classList.add('cc')
-      setTimeout(() => document.body.classList.remove('cc'), 180)
-    })
-    return () => { cancelAnimationFrame(rafId); document.removeEventListener('mousemove', onMove) }
-  }, [])
-
-  return { curDotRef, curRingRef, mobileMenuOpen, setMobileMenuOpen }
+  return { mobileMenuOpen, setMobileMenuOpen }
 }
 
 export function Productos() {
   const { user, openModal } = useAuth()
   const [activeTab, setActiveTab] = useState('saas')
-  const { curDotRef, curRingRef, mobileMenuOpen, setMobileMenuOpen } = usePageSetup(activeTab)
+  const { mobileMenuOpen, setMobileMenuOpen } = usePageSetup(activeTab)
 
   useEffect(() => {
     document.body.classList.add('page-productos')
@@ -81,8 +52,6 @@ export function Productos() {
 
   return (
     <>
-      <div id="cur-dot" ref={curDotRef}></div>
-      <div id="cur-ring" ref={curRingRef}></div>
 
       <nav id="nav">
         <div className="nav-inner">

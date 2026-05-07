@@ -1,11 +1,9 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useAuth } from '../hooks/useAuth'
 
 export function Landing() {
   const { user, openModal } = useAuth()
-  const curDotRef = useRef(null)
-  const curRingRef = useRef(null)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
   useEffect(() => {
@@ -69,48 +67,9 @@ export function Landing() {
     return () => window.removeEventListener('scroll', update)
   }, [])
 
-  // Cursor personalizado
-  useEffect(() => {
-    const curDot = curDotRef.current
-    const curRing = curRingRef.current
-
-    const moveCursor = (e) => {
-      if (curDot) {
-        curDot.style.left = e.clientX + 'px'
-        curDot.style.top = e.clientY + 'px'
-      }
-      if (curRing) {
-        curRing.style.left = e.clientX + 'px'
-        curRing.style.top = e.clientY + 'px'
-      }
-    }
-
-    window.addEventListener('mousemove', moveCursor)
-
-    // Hover effects
-    document.addEventListener('mouseenter', (e) => {
-      if (e.target.tagName === 'BUTTON' || e.target.tagName === 'A') {
-        document.body.classList.add('ch')
-      }
-    }, true)
-
-    document.addEventListener('mouseleave', (e) => {
-      if (e.target.tagName === 'BUTTON' || e.target.tagName === 'A') {
-        document.body.classList.remove('ch')
-      }
-    }, true)
-
-    return () => {
-      window.removeEventListener('mousemove', moveCursor)
-    }
-  }, [])
 
   return (
     <>
-      {/* Cursor personalizado */}
-      <div id="cur-dot" ref={curDotRef}></div>
-      <div id="cur-ring" ref={curRingRef}></div>
-
       {/* Navbar */}
       <nav id="nav">
         <div className="nav-inner">

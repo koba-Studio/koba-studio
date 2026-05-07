@@ -35,28 +35,14 @@ body.page-contacto  { --pg-from:#EC4899; --pg-to:#F59E0B; --pg-from-a10:rgba(236
 /* RESET */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 html { scroll-behavior: smooth; font-family: 'Inter', sans-serif; }
-body { background: #FFFFFF; color: #0D0D0D; overflow-x: hidden; cursor: none; }
-a, button { cursor: none; text-decoration: none; }
+body { background: #FFFFFF; color: #0D0D0D; overflow-x: hidden; }
+a, button { cursor: pointer; text-decoration: none; }
 ::selection { background: rgba(196,139,47,0.15); color: #0D0D0D; }
 *:focus-visible { outline: 2px solid #7B6FE8; outline-offset: 3px; }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: 0.001ms !important; transition-duration: 0.001ms !important; }
   .wa, .will-animate { opacity: 1 !important; transform: none !important; }
 }
-
-/* ── CURSOR ── */
-#cur-dot, #cur-ring {
-  position: fixed; border-radius: 50%; pointer-events: none; z-index: 9999;
-  transform: translate(-50%, -50%); will-change: transform;
-}
-#cur-dot { width: 8px; height: 8px; background: #0D0D0D; transition: opacity 200ms; }
-#cur-ring {
-  width: 28px; height: 28px; border: 1.5px solid rgba(13,13,13,0.22);
-  transition: width 250ms ease, height 250ms ease, border-color 250ms ease;
-}
-body.ch #cur-dot { opacity: 0; }
-body.ch #cur-ring { width: 52px; height: 52px; border-color: #C48B2F; }
-body.cc #cur-ring { width: 20px; height: 20px; }
 
 /* ── NAVBAR ── */
 #nav {
