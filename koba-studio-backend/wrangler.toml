@@ -1,0 +1,29 @@
+name = "kobastudio-api"
+type = "javascript"
+compatibility_date = "2024-12-01"
+main = "worker.js"
+
+# Configuración de rutas
+routes = [
+  { pattern = "api.kobastudio.cl/*", zone_name = "kobastudio.cl" }
+]
+
+# Variables de entorno (las claves van en Cloudflare Dashboard)
+[env.production]
+routes = [
+  { pattern = "api.kobastudio.cl/*", zone_name = "kobastudio.cl" }
+]
+
+vars = { NODE_ENV = "production" }
+
+# Compatibilidad con Node.js (para Express)
+compatibility_flags = ["nodejs_compat"]
+
+# Build configuration
+[build]
+command = "npm run build"
+cwd = "./koba-studio-backend"
+
+# Assets (si hay archivos estáticos)
+[assets]
+directory = "public"

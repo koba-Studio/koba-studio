@@ -1,0 +1,29 @@
+name = "kobastudio-frontend"
+type = "javascript"
+compatibility_date = "2024-12-01"
+pages_build_output_dir = "dist"
+
+# Configurar el dominio
+routes = [
+  { pattern = "kobastudio.cl", zone_name = "kobastudio.cl" },
+  { pattern = "*.kobastudio.cl", zone_name = "kobastudio.cl" }
+]
+
+[build]
+command = "npm run build"
+cwd = "./koba-studio-react"
+watch_paths = ["src/**/*.jsx", "src/**/*.css"]
+
+[build.upload]
+format = "modules"
+dir = "dist"
+
+[env.production]
+routes = [
+  { pattern = "kobastudio.cl/*", zone_name = "kobastudio.cl" },
+  { pattern = "www.kobastudio.cl/*", zone_name = "kobastudio.cl" }
+]
+
+# Variables de entorno para producción (se configuran en Cloudflare Dashboard)
+[env.production.vars]
+VITE_API_URL = "https://api.kobastudio.cl"
