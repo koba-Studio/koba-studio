@@ -10,18 +10,15 @@ import pagesRouter from './routes/pages.js'
 
 const app = new Hono()
 
-app.use('*', async (c, next) => {
-  const frontendUrl = c.env?.FRONTEND_URL || 'https://kobastudio.cl'
-  return cors({
-    origin: (origin) => {
-      if (!origin || origin === frontendUrl || origin.startsWith('http://localhost')) {
-        return origin
-      }
-      return null
-    },
-    credentials: true,
-  })(c, next)
-})
+app.use('*', cors({
+  origin: (origin) => {
+    if (!origin || origin === 'https://kobastudio.cl' || origin.startsWith('http://localhost')) {
+      return origin
+    }
+    return null
+  },
+  credentials: true,
+}))
 
 app.get('/health', (c) => c.json({ status: 'OK', timestamp: new Date().toISOString() }))
 
