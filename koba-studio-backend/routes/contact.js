@@ -45,7 +45,7 @@ app.post('/', optionalAuth, async (c) => {
     return c.json({ success: true, message: 'Mensaje recibido. Te responderemos en menos de 24 horas.' }, 201)
   } catch (err) {
     console.error('Contact endpoint error:', err)
-    return c.json({ error: 'Error interno del servidor' }, 500)
+    return c.json({ error: 'Error interno del servidor', detail: err.message }, 500)
   }
 })
 
