@@ -5,10 +5,3 @@ main = "worker.js"
 routes = [
   { pattern = "api.kobastudio.cl/*", zone_name = "kobastudio.cl" }
 ]
-
-[env.production]
-routes = [
-  { pattern = "api.kobastudio.cl/*", zone_name = "kobastudio.cl" }
-]
-
-vars = { NODE_ENV = "production" }
