@@ -1,81 +1,150 @@
-import express from 'express'
-import { supabase } from '../lib/supabase.js'
+import { Hono } from 'hono'
+import { getSupabase } from '../lib/supabase.js'
 import { validateContactForm } from '../lib/validate.js'
-import { contactLimiter } from '../lib/rateLimiter.js'
-import { optionalAuth } from '../middleware/auth.js'
+import { requireAuth, optionalAuth } from '../middleware/auth.js'
+import { requireAdmin } from '../middleware/adminOnly.js'
 
-const router = express.Router()
+const app = new Hono()
 
-/**
- * POST /api/contact
- * Crear nuevo mensaje de contacto
- *
- * Seguridad:
- * - Rate limiting: máx 5 por hora por IP
- * - Validación de inputs
- * - Sanitización de datos
- * - Autenticación opcional (para usuarios registrados)
- */
-router.post('/', contactLimiter, optionalAuth, async (req, res) => {
+app.post('/', optionalAuth, async (c) => {
   try {
-    const { nombre, email, mensaje, servicio, empresa, urgencia } = req.body
+    const { nombre, email, mensaje, servicio, empresa, urgencia } = await c.req.json()
+    const user = c.get('user')
 
-    // Validar y sanitizar datos
-    const validation = validateContactForm({
-      nombre,
-      email,
-      mensaje,
-      servicio,
-      empresa,
-      urgencia
-    })
+    const validation = validateContactForm({ nombre, email, mensaje, servicio, empresa, urgencia })
 
     if (!validation.valid) {
-      return res.status(400).json({
-        error: 'Validación fallida',
-        details: validation.errors
-      })
+      return c.json({ error: 'Validación fallida', details: validation.errors }, 400)
     }
 
     const sanitized = validation.data
+    const ip = c.req.header('CF-Connecting-IP') || c.req.header('X-Forwarded-For') || 'unknown'
 
-    // Crear mensaje de contacto en Supabase
-    const { data, error } = await supabase
+    const supabase = getSupabase(c.env)
+    const { error } = await supabase
       .from('contact_messages')
-      .insert([
-        {
-          nombre: sanitized.nombre,
-          email: sanitized.email,
-          mensaje: sanitized.mensaje,
-          servicio: sanitized.servicio,
-          empresa: sanitized.empresa,
-          urgencia: sanitized.urgencia,
-          user_id: req.user?.id || null, // null si no está autenticado
-          ip_address: req.ip,
-          read: false,
-          created_at: new Date().toISOString()
-        }
-      ])
-      .select()
+      .insert([{
+        nombre: sanitized.nombre,
+        email: sanitized.email,
+        mensaje: sanitized.mensaje,
+        servicio: sanitized.servicio,
+        empresa: sanitized.empresa,
+        urgencia: sanitized.urgencia,
+        user_id: user?.id || null,
+        ip_address: ip,
+        read: false,
+        created_at: new Date().toISOString()
+      }])
 
     if (error) {
       console.error('Supabase insert error:', error)
-      return res.status(500).json({ error: 'Error al guardar el mensaje' })
+      return c.json({ error: 'Error al guardar el mensaje' }, 500)
     }
 
-    // Log para auditoría
-    console.log(`[CONTACT] New message from ${sanitized.email} (user: ${req.user?.id || 'anonymous'})`)
-
-    // Responder con éxito (sin exponer datos internos)
-    res.status(201).json({
-      success: true,
-      message: 'Mensaje recibido. Te responderemos en menos de 24 horas.'
-    })
-
+    console.log(`[CONTACT] New message from ${sanitized.email} (user: ${user?.id || 'anonymous'})`)
+    return c.json({ success: true, message: 'Mensaje recibido. Te responderemos en menos de 24 horas.' }, 201)
   } catch (err) {
     console.error('Contact endpoint error:', err)
-    res.status(500).json({ error: 'Error interno del servidor' })
+    return c.json({ error: 'Error interno del servidor' }, 500)
   }
 })
 
-export default router
+app.get('/', requireAuth, requireAdmin, async (c) => {
+  try {
+    const supabase = getSupabase(c.env)
+    const { data, error } = await supabase
+      .from('contact_messages')
+      .select('*')
+      .order('created_at', { ascending: false })
+
+    if (error) throw error
+
+    const tickets = (data || []).map(msg => ({
+      id: msg.id,
+      name: msg.nombre,
+      email: msg.email,
+      message: msg.mensaje,
+      channel: msg.servicio || 'Formulario web',
+      status: msg.status || 'open',
+      timestamp: msg.created_at,
+      urgency: msg.urgencia,
+      company: msg.empresa,
+      user_id: msg.user_id,
+      replies: msg.replies || [],
+      read: msg.read
+    }))
+
+    return c.json(tickets)
+  } catch (err) {
+    return c.json({ error: err.message }, 400)
+  }
+})
+
+app.patch('/:id', requireAuth, requireAdmin, async (c) => {
+  try {
+    const { status } = await c.req.json()
+    const user = c.get('user')
+
+    if (!['open', 'replied', 'resolved'].includes(status)) {
+      return c.json({ error: 'Invalid status' }, 400)
+    }
+
+    const supabase = getSupabase(c.env)
+    const { data, error } = await supabase
+      .from('contact_messages')
+      .update({ status, read: true, updated_at: new Date().toISOString() })
+      .eq('id', c.req.param('id'))
+      .select()
+
+    if (error) throw error
+    if (!data || data.length === 0) return c.json({ error: 'Message not found' }, 404)
+
+    console.log(`[CONTACT] Ticket updated: ${c.req.param('id')} -> ${status} by ${user.email}`)
+    return c.json({ success: true, message: 'Ticket updated' })
+  } catch (err) {
+    return c.json({ error: err.message }, 400)
+  }
+})
+
+app.post('/:id/reply', requireAuth, requireAdmin, async (c) => {
+  try {
+    const { message } = await c.req.json()
+    const user = c.get('user')
+
+    if (!message || message.trim().length === 0) {
+      return c.json({ error: 'Message is required' }, 400)
+    }
+
+    const supabase = getSupabase(c.env)
+    const { data: ticket, error: getError } = await supabase
+      .from('contact_messages')
+      .select('replies')
+      .eq('id', c.req.param('id'))
+      .single()
+
+    if (getError) throw getError
+    if (!ticket) return c.json({ error: 'Message not found' }, 404)
+
+    const replies = ticket.replies || []
+    replies.push({
+      from: 'admin',
+      text: message,
+      timestamp: new Date().toISOString(),
+      admin_email: user.email
+    })
+
+    const { error: updateError } = await supabase
+      .from('contact_messages')
+      .update({ replies, status: 'replied', updated_at: new Date().toISOString() })
+      .eq('id', c.req.param('id'))
+
+    if (updateError) throw updateError
+
+    console.log(`[CONTACT] Reply added to ticket ${c.req.param('id')} by ${user.email}`)
+    return c.json({ success: true, message: 'Reply sent' })
+  } catch (err) {
+    return c.json({ error: err.message }, 400)
+  }
+})
+
+export default app

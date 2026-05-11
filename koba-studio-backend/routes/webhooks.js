@@ -1,38 +1,35 @@
-import express from 'express'
-import { supabase } from '../config.js'
+import { Hono } from 'hono'
+import { getSupabase } from '../lib/supabase.js'
 
-const router = express.Router()
+const app = new Hono()
 
-router.post('/mercado-pago', async (req, res) => {
+app.post('/mercado-pago', async (c) => {
   try {
-    const { type, data } = req.body
+    const { type, data } = await c.req.json()
 
     if (type !== 'payment') {
-      return res.json({ received: true })
+      return c.json({ received: true })
     }
 
     const paymentId = data?.id
-    const status = 'completed' // TODO: Get from Mercado Pago API
-
     if (!paymentId) {
-      return res.status(400).json({ error: 'Missing payment ID' })
+      return c.json({ error: 'Missing payment ID' }, 400)
     }
 
+    const supabase = getSupabase(c.env)
     const { error } = await supabase
       .from('purchases')
-      .update({ status })
+      .update({ status: 'completed' })
       .eq('mercado_pago_id', paymentId)
 
-    if (error) {
-      console.error('Database update error:', error)
-    }
+    if (error) console.error('Database update error:', error)
 
-    console.log(`Payment ${paymentId} status: ${status}`)
-    res.json({ success: true })
+    console.log(`Payment ${paymentId} status: completed`)
+    return c.json({ success: true })
   } catch (err) {
     console.error('Webhook error:', err)
-    res.status(400).json({ error: err.message })
+    return c.json({ error: err.message }, 400)
   }
 })
 
-export default router
+export default app

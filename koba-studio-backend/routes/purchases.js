@@ -1,41 +1,39 @@
-import express from 'express'
-import { supabase } from '../config.js'
+import { Hono } from 'hono'
+import { getSupabase } from '../lib/supabase.js'
 
-const router = express.Router()
+const app = new Hono()
 
-router.post('/checkout', async (req, res) => {
+app.post('/checkout', async (c) => {
   try {
-    const { userId, items, email } = req.body
-
-    // TODO: Implement Mercado Pago preference creation
     const preferenceId = 'TEST_' + Date.now()
-
-    res.json({
+    return c.json({
       preferenceId,
       paymentUrl: `https://www.mercadopago.com.ar/checkout/v1/redirect?pref_id=${preferenceId}`,
     })
   } catch (err) {
-    res.status(400).json({ error: err.message })
+    return c.json({ error: err.message }, 400)
   }
 })
 
-router.get('/user/:userId', async (req, res) => {
+app.get('/user/:userId', async (c) => {
   try {
+    const supabase = getSupabase(c.env)
     const { data, error } = await supabase
       .from('purchases')
       .select('*')
-      .eq('user_id', req.params.userId)
+      .eq('user_id', c.req.param('userId'))
 
     if (error) throw error
-    res.json(data)
+    return c.json(data)
   } catch (err) {
-    res.status(400).json({ error: err.message })
+    return c.json({ error: err.message }, 400)
   }
 })
 
-router.post('/record', async (req, res) => {
+app.post('/record', async (c) => {
   try {
-    const { userId, items, status, mercadoPagoId } = req.body
+    const { userId, items, status, mercadoPagoId } = await c.req.json()
+    const supabase = getSupabase(c.env)
 
     const { data, error } = await supabase
       .from('purchases')
@@ -48,10 +46,10 @@ router.post('/record', async (req, res) => {
       .select()
 
     if (error) throw error
-    res.json(data[0])
+    return c.json(data[0])
   } catch (err) {
-    res.status(400).json({ error: err.message })
+    return c.json({ error: err.message }, 400)
   }
 })
 
-export default router
+export default app

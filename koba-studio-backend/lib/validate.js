@@ -1,4 +1,5 @@
-import { isEmail, escape } from 'validator'
+import validator from 'validator'
+const { isEmail, escape } = validator
 
 /**
  * Validar y sanitizar datos del formulario de contacto

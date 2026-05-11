@@ -1,71 +1,67 @@
-import express from 'express'
-import { supabase } from '../config.js'
+import { Hono } from 'hono'
+import { getSupabase } from '../lib/supabase.js'
 
-const router = express.Router()
+const app = new Hono()
 
-router.post('/signup', async (req, res) => {
+app.post('/signup', async (c) => {
   try {
-    const { email, password, fullName } = req.body
+    const { email, password, fullName } = await c.req.json()
+    const supabase = getSupabase(c.env)
 
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
-      options: {
-        data: { full_name: fullName },
-      },
+      options: { data: { full_name: fullName } },
     })
 
     if (error) throw error
-
-    res.json({ user: data.user, message: 'Signup successful' })
+    return c.json({ user: data.user, message: 'Signup successful' })
   } catch (err) {
-    res.status(400).json({ error: err.message })
+    return c.json({ error: err.message }, 400)
   }
 })
 
-router.post('/signin', async (req, res) => {
+app.post('/signin', async (c) => {
   try {
-    const { email, password } = req.body
+    const { email, password } = await c.req.json()
+    const supabase = getSupabase(c.env)
 
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    })
+    const { data, error } = await supabase.auth.signInWithPassword({ email, password })
 
     if (error) throw error
-
-    res.json({ user: data.user, session: data.session })
+    return c.json({ user: data.user, session: data.session })
   } catch (err) {
-    res.status(400).json({ error: err.message })
+    return c.json({ error: err.message }, 400)
   }
 })
 
-router.post('/signout', async (req, res) => {
+app.post('/signout', async (c) => {
   try {
+    const supabase = getSupabase(c.env)
     const { error } = await supabase.auth.signOut()
     if (error) throw error
-    res.json({ message: 'Signed out successfully' })
+    return c.json({ message: 'Signed out successfully' })
   } catch (err) {
-    res.status(400).json({ error: err.message })
+    return c.json({ error: err.message }, 400)
   }
 })
 
-router.get('/me', async (req, res) => {
+app.get('/me', async (c) => {
   try {
-    const authHeader = req.headers.authorization
+    const authHeader = c.req.header('Authorization')
     if (!authHeader) {
-      return res.status(401).json({ error: 'No authorization header' })
+      return c.json({ error: 'No authorization header' }, 401)
     }
 
     const token = authHeader.replace('Bearer ', '')
+    const supabase = getSupabase(c.env)
     const { data, error } = await supabase.auth.getUser(token)
 
     if (error) throw error
-
-    res.json({ user: data.user })
+    return c.json({ user: data.user })
   } catch (err) {
-    res.status(401).json({ error: err.message })
+    return c.json({ error: err.message }, 401)
   }
 })
 
-export default router
+export default app

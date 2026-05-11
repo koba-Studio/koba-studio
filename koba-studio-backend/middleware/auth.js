@@ -1,49 +1,40 @@
-import { supabase } from '../lib/supabase.js'
+import { getSupabase } from '../lib/supabase.js'
 
-/**
- * Middleware para verificar JWT y usuario autenticado
- * Requiere Authorization header: "Bearer <jwt_token>"
- */
-export async function requireAuth(req, res, next) {
+export async function requireAuth(c, next) {
   try {
-    const authHeader = req.headers.authorization
+    const authHeader = c.req.header('Authorization')
     if (!authHeader?.startsWith('Bearer ')) {
-      return res.status(401).json({ error: 'Missing or invalid authorization header' })
+      return c.json({ error: 'Missing or invalid authorization header' }, 401)
     }
 
     const token = authHeader.slice(7)
+    const supabase = getSupabase(c.env)
     const { data: { user }, error } = await supabase.auth.getUser(token)
 
     if (error || !user) {
-      return res.status(401).json({ error: 'Invalid or expired token' })
+      return c.json({ error: 'Invalid or expired token' }, 401)
     }
 
-    // Adjuntar usuario al request para uso posterior
-    req.user = user
-    next()
+    c.set('user', user)
+    await next()
   } catch (err) {
     console.error('Auth middleware error:', err)
-    res.status(500).json({ error: 'Authentication failed' })
+    return c.json({ error: 'Authentication failed' }, 500)
   }
 }
 
-/**
- * Middleware opcional para capturar usuario si está autenticado
- * No rechaza si no hay autenticación
- */
-export async function optionalAuth(req, res, next) {
+export async function optionalAuth(c, next) {
   try {
-    const authHeader = req.headers.authorization
+    const authHeader = c.req.header('Authorization')
     if (authHeader?.startsWith('Bearer ')) {
       const token = authHeader.slice(7)
+      const supabase = getSupabase(c.env)
       const { data: { user } } = await supabase.auth.getUser(token)
-      if (user) {
-        req.user = user
-      }
+      if (user) c.set('user', user)
     }
-    next()
+    await next()
   } catch (err) {
     console.error('Optional auth middleware error:', err)
-    next() // No bloquear si falla autenticación opcional
+    await next()
   }
 }
